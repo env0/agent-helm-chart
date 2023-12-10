@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.agentKey }}.agent-trigger-deployment
+  labels:
+    env0: agent-trigger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      env0: agent-trigger
+  template:
+    metadata:
+      labels:
+        env0: agent-trigger
+      annotations:
+        forcePodRestart: {{ randAlphaNum 5 | quote }}
+    spec:
+      serviceAccountName: agent-trigger-service-account
+      restartPolicy: Always
+      volumes:
+        - name: tmp
+          emptyDir: { }
+      {{ if hasKey .Values "agentImagePullSecret" }}
+      imagePullSecrets:
+        - name: env0-image-pull-secret-{{ .Values.agentKey }}
+      {{ end }}
+      containers:
+        - name: env0-agent-trigger
+  {{ include "env0-agent.strict-security-context" . | indent 10 }}
+          image: {{ .Values.dockerImage }}
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+          command: ["node"]
+          args: ["--enable-source-maps", "run-agent-trigger.js"]
+          livenessProbe:
+            exec:
+              command:
+                - rm
+                - &livenessProbeFile /tmp/healthy
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: 500m
+              memory: 1000Mi
+          env:
+{{ include "env0-agent.http-proxy" . | indent 12 }}
+            - name: AGENT_VERSION
+              value: {{ quote (regexReplaceAll ".*:" .Values.dockerImage "") }}
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: env0-secrets-{{ .Values.agentKey }}
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: env0-secrets-{{ .Values.agentKey }}
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: OUTPUT_LOGS_LOG_GROUP_NAME
+              value: "{{ .Values.outputLogsLogGroupName }}"
+            - name: STAGE
+              value: "{{ .Values.agentKey }}"
+            - name: ENV0_STAGE
+              value: "{{ .Values.stage }}"
+            - name: IS_SELF_HOSTED_K8S
+              value: "{{ .Values.isSelfHosted }}"
+            - name: K8S_NAMESPACE
+              value: "{{ .Release.Namespace }}"
+            - name: CRON_JOB_NAME
+              value: "{{ .Values.agentKey }}.deployment"
+            - name: CRON_JOB_API
+              value: {{ if .Capabilities.APIVersions.Has "batch/v1/CronJob" }}BatchV1Api{{ else }}BatchV1beta1Api{{ end }}
+            - name: AGENT_TRIGGER_LIVENESS_PROBE_FILE
+              value: *livenessProbeFile
+            - name: FAILED_JOBS_HISTORY_LIMIT
+              value: "{{ .Values.jobHistoryLimitFailure | default 10 }}"
+            - name: SUCCESSFUL_JOBS_HISTORY_LIMIT
+              value: "{{ .Values.jobHistoryLimitSuccess | default 10 }}"
+            - name: DEPLOYMENT_POD_WARM_POOL_SIZE
+              value: "{{ .Values.deploymentPodWarmPoolSize | default 0 }}"
+            ### For calling the API GW
+            - name: AGENT_API_GATEWAY_URL
+              value: "{{ .Values.apiGatewayUrl }}"
+            - name: DEPLOYMENT_TRIGGER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: env0-secrets-{{ .Values.agentKey }}
+                  key: DEPLOYMENT_TRIGGER_API_KEY
+
+            ### K8S Metadata
+            - name: K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            {{ if .Values.logger }}
+            - name: CONSOLE_LOGS_FORMAT
+              value: {{ .Values.logger.format }}
+            - name: CONSOLE_LOGS_LEVEL
+              value: {{ .Values.logger.level }}
+            {{ end }}
+      {{ if .Values.tolerations }}
+      # Warning - every whitespace here matters
+      tolerations: {{ range $i, $toleration := .Values.tolerations }}
+        -
+        {{ range $k, $v := $toleration }}  {{ $k }}: {{ $v }}
+        {{ end }}{{ end }}
+      {{ end }}
+      {{ if .Values.affinity }}
+      affinity: {{ .Values.affinity | toYaml | trim | nindent 8 }}
+      {{ end }}
