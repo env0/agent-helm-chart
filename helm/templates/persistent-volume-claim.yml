@@ -1,0 +1,16 @@
+{{ if not (hasKey .Values "env0StateEncryptionKey") }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: env0-state-volume-claim
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: {{ .Values.storageClassName | default "env0-state-sc" | quote }}
+  {{ if hasKey .Values "persistentVolume" }}
+  volumeName: {{ .Values.persistentVolume }}
+  {{ end }}
+  resources:
+    requests:
+      storage: 300Gi
+{{ end }}

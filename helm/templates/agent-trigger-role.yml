@@ -1,0 +1,15 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: agent-trigger-role-{{ .Values.agentKey }}
+  namespace: {{ .Release.Namespace }}
+rules:
+  - apiGroups: ["batch","extensions"]
+    resources: ["jobs"]
+    verbs: ["create", "list", "delete"]
+  - apiGroups: ["batch","extensions"]
+    resources: ["cronjobs"]
+    verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["list"]

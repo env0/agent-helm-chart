@@ -1,0 +1,10 @@
+# Default values for env0-deployment.
+stateMountPath: "/mnt/private/env0"
+agentProxy:
+  install: true
+#requests:
+#  cpu: 200m
+#  memory: 500Mi
+limits:
+  cpu: 460m
+  memory: 1500Mi

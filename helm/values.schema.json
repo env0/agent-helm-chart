@@ -1,0 +1,329 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "properties": {
+    "agentKey": {
+      "description": "The ID of the agent",
+      "type": "string"
+    },
+    "awsAccessKeyIdEncoded": {
+      "description": "The AWS_ACCESS_KEY_ID provided by env0 used to perform agent specific actions in env0's AWS account",
+      "type": "string"
+    },
+    "awsSecretAccessKeyEncoded": {
+      "description": "The AWS_SECRET_ACCESS_KEY provided by env0 used to perform agent specific actions in env0's AWS account",
+      "type": "string"
+    },
+    "deploymentJobServiceAccountName": {
+      "description": "An optional K8s service account name you wish to set for the env0 deployment pods",
+      "type": "string"
+    },
+    "storageClassName": {
+      "description": "An optional K8s storage class name for the PVC",
+      "type": "string"
+    },
+    "persistentVolume": {
+      "description": "An optional persistent volume for existing storage",
+      "type": "string"
+    },
+    "env0ApiGwKeyEncoded": {
+      "description": "env0 API GW API key",
+      "type": "string"
+    },
+    "kmsKeyArn": {
+      "description": "KMS key in env0",
+      "type": "string"
+    },
+    "stage": {
+      "description": "env0 stage",
+      "type": "string"
+    },
+    "dockerImage": {
+      "description": "The deployment docker image",
+      "type": "string"
+    },
+    "deploymentPodWarmPoolSize": {
+      "description": "When set, a number jobs/pods will be spun up to poll the queue and start env0 deployments faster",
+      "type": "number"
+    },
+    "infracostApiKeyEncoded": {
+      "description": "Infracost API KEY, base64 encoded",
+      "type": "string"
+    },
+    "outputLogsLogGroupName": {
+      "description": "Log group name in env0",
+      "type": "string"
+    },
+    "assumerKeyIdEncoded": {
+      "description": "AWS_ACCESS_KEY_ID used when assuming a role in env0",
+      "type": "string"
+    },
+    "assumerSecretEncoded": {
+      "description": "AWS_SECRET_ACCESS_KEY used when assuming a role in env0",
+      "type": "string"
+    },
+    "stateMountPath": {
+      "description": "State mount path - this will be overwritten when setting strictSecurityContext=true",
+      "type": "string"
+    },
+    "isSelfHosted": {
+      "description": "Is this a self hosted agent",
+      "type": "string"
+    },
+    "limits": {
+      "description": "Limits on the container",
+      "properties": {
+        "cpu": {
+          "type": "string"
+        },
+        "memory": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "requests": {
+      "description": "resource requests on the container",
+      "properties": {
+        "cpu": {
+          "type": "string"
+        },
+        "memory": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "agentProxy": {
+      "description": "Agent proxy for proxying VCS requests from env0 to on-prem VCS servers",
+      "properties": {
+        "install": {
+          "type": "boolean",
+          "description": "Install Agent Proxy"
+        },
+        "enableVcsWebhooksProxy": {
+          "type": "boolean",
+          "description": "Enable proxying of VCS webhook requests from the agent to env0"
+        },
+        "limits": {
+          "description": "Pod's limits",
+          "properties": {
+            "cpu": {
+              "type": "string"
+            },
+            "memory": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "requests": {
+          "description": "resource requests on the proxy container",
+          "properties": {
+            "cpu": {
+              "type": "string"
+            },
+            "memory": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "agentImagePullPolicy": {
+      "description": "Agent image pull policy. Default is Always",
+      "enum": [
+        "Always",
+        "Never",
+        "IfNotPresent"
+      ]
+    },
+    "agentImagePullSecret": {
+      "description": "Agent image pull secret",
+      "type": "string"
+    },
+    "tolerations": {
+      "description": "Kubernetes tolerations on the containers",
+      "type": "array"
+    },
+    "affinity": {
+      "description": "The default Kubernetes affinity that will be applied to all pods",
+      "$schema": "agent/helm/schemas/kubernetesjsonschema.dev/v1.10.3-standalone/affinity.json"
+    },
+    "deploymentAffinity": {
+      "description": "Kubernetes affinity for deployment containers, This will override the default affinity for deployment pods",
+      "$schema": "agent/helm/schemas/kubernetesjsonschema.dev/v1.10.3-standalone/affinity.json"
+    },
+    "customerAwsAccessKeyIdEncoded": {
+      "description": "AWS access key used for SSM secret fetching, base64 encoded",
+      "type": "string"
+    },
+    "customerAwsSecretAccessKeyEncoded": {
+      "description": "AWS secret used for SSM secret fetching, base64 encoded",
+      "type": "string"
+    },
+    "customerVaultTokenEncoded": {
+      "description": "HCP Vault Token for secret fetching, base64 encoded",
+      "type": "string"
+    },
+    "customerVaultUrl": {
+      "description": "HCP Vault URL for secret fetching",
+      "type": "string"
+    },
+    "awsSecretsRegion": {
+      "description": "AWS region used for SSM secret fetching",
+      "type": "string",
+      "enum": [
+        null,
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2",
+        "ap-south-1",
+        "ap-northeast-3",
+        "ap-northeast-2",
+        "ap-southeast-1",
+        "ap-southeast-2",
+        "ap-northeast-1",
+        "ca-central-1",
+        "eu-central-1",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3",
+        "eu-north-1",
+        "sa-east-1",
+        "me-south-1",
+        "ap-southeast-3",
+        "ap-east-1",
+        "af-south-1"
+      ]
+    },
+    "customerGoogleProject": {
+      "description": "GCP project used for GCP secret fetching, base64 encoded",
+      "type": "string"
+    },
+    "customerGoogleCredentials": {
+      "description": "GCP credentials used for GCP secret fetching, base64 encoded",
+      "type": "string"
+    },
+    "customerAzureClientId": {
+      "description": "Azure client ID used for Azure secret fetching, base64 encoded",
+      "type": "string"
+    },
+    "customerAzureClientSecret": {
+      "description": "Azure client secret used for Azure secret fetching, base64 encoded",
+      "type": "string"
+    },
+    "customerAzureTenantId": {
+      "description": "Azure tenant ID used for Azure secret fetching, base64 encoded",
+      "type": "string"
+    },
+    "bitbucketServerCredentialsEncoded": {
+      "description": "Bitbucket server credentials, in the format of 'username:token', base64 encoded",
+      "type": "string"
+    },
+    "gitlabEnterpriseCredentialsEncoded": {
+      "description": "Gitlab Enterprise credentials, base64 encoded",
+      "type": "string"
+    },
+    "gitlabEnterpriseBaseUrlSuffix": {
+      "description": "Gitlab Enterprise base url additional suffix",
+      "type": "string"
+    },
+    "githubEnterpriseCredentialsEncoded": {
+      "description": "GitHub Enterprise credentials, base64 encoded",
+      "type": "string"
+    },
+    "alternativeLogLocation": {
+      "description": "Configuration for alternative log storage",
+      "properties": {
+        "dynamoWriterExternalIdEncoded": {
+          "description": "The ExternalID used to Assume the Dynamo Writer Role, base64 encoded",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "allowedVcsUrlRegex": {
+      "description": "When set, cloning a git repository will only be permitted if the git url matches the regular expression set.",
+      "type": "string",
+      "foramt": "regex"
+    },
+    "jobHistoryLimitFailure": {
+      "description": "Maximal amount of failed completed Jobs that will be shown to the user",
+      "type": "integer"
+    },
+    "jobHistoryLimitSuccess": {
+      "description": "Maximal amount of successfully completed Jobs that will be shown to the user",
+      "type": "integer"
+    },
+    "httpProxy": {
+      "type": "string"
+    },
+    "httpsProxy": {
+      "type": "string"
+    },
+    "noProxy": {
+      "type": "string"
+    },
+    "gitSslNoVerify": {
+      "type": "string",
+      "description": "will be passed to the GIT_SSL_NO_VERIFY environment variable"
+    },
+    "strictSecurityContext": {
+      "type": "boolean",
+      "description": "Enable security policy for agent pods that prevent from write to the system folders and run the pod as none admin"
+    },
+    "customCertificates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Add custom certificates inside the containers. Array of K8S secret names, each containing a key that represents a certificate file name"
+    },
+    "env0StateEncryptionKey": {
+      "type": "string",
+      "description": "The ENV0_STATE_ENCRYPTION_KEY when provided will be used to encrypt the state file and store it in the state bucket"
+    },
+    "logger": {
+      "description": "console logger config",
+      "properties": {
+        "level": {
+          "type": "string",
+          "description": "log level",
+          "enum": [
+            "debug",
+            "info",
+            "warn",
+            "error"
+          ]
+        },
+        "format": {
+          "type": "string",
+          "description": "log format",
+          "enum": [
+            "json",
+            "cli"
+          ]
+        }
+      },
+      "type": "object"
+    }
+  },
+  "required": [
+    "agentKey",
+    "awsAccessKeyIdEncoded",
+    "awsSecretAccessKeyEncoded",
+    "env0ApiGwKeyEncoded",
+    "stage",
+    "dockerImage",
+    "stateMountPath",
+    "limits",
+    "agentProxy"
+  ],
+  "title": "Values",
+  "type": "object"
+}
