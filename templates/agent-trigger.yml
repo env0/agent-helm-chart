@@ -78,9 +78,9 @@ spec:
             - name: AGENT_TRIGGER_LIVENESS_PROBE_FILE
               value: *livenessProbeFile
             - name: FAILED_JOBS_HISTORY_LIMIT
-              value: "{{ .Values.jobHistoryLimitFailure | default 10 }}"
+              value: "{{ .Values.jobHistoryLimitFailure }}"
             - name: SUCCESSFUL_JOBS_HISTORY_LIMIT
-              value: "{{ .Values.jobHistoryLimitSuccess | default 10 }}"
+              value: "{{ .Values.jobHistoryLimitSuccess }}"
             - name: DEPLOYMENT_POD_WARM_POOL_SIZE
               value: "{{ .Values.deploymentPodWarmPoolSize | default 0 }}"
             ### For calling the API GW
