@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft-07/schema#",
   "properties": {
     "agentKey": {
-      "description": "The ID of the agent",
+      "description": "The ID of the agent.",
       "type": "string"
     },
     "awsAccessKeyIdEncoded": {
