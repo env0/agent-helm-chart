@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft-07/schema#",
   "properties": {
     "agentKey": {
-      "description": "The ID of the agent.",
+      "description": "The ID of the agent",
       "type": "string"
     },
     "awsAccessKeyIdEncoded": {
@@ -13,6 +13,10 @@
       "description": "The AWS_SECRET_ACCESS_KEY provided by env0 used to perform agent specific actions in env0's AWS account",
       "type": "string"
     },
+	"podAdditionalLabels": {
+	  "description": "Additional labels to be added to the agent pods",
+	  "type": "object"
+	},
     "deploymentJobServiceAccountName": {
       "description": "An optional K8s service account name you wish to set for the env0 deployment pods",
       "type": "string"

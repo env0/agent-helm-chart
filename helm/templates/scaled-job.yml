@@ -20,6 +20,12 @@ spec:
         metadata:
           labels:
             env0: agent-deployment
+            {{- if .Values.podAdditionalLabels }}
+            {{- range $k, $v := .Values.podAdditionalLabels }}
+            {{ $k }}: {{ $v }}
+            {{- end }}
+            {{ end }}
+
           annotations:
             "cluster-autoscaler.kubernetes.io/safe-to-evict": "false"
         spec:
