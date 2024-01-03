@@ -1,5 +1,0 @@
-{{- define "env0-agent.persistent-volume-claim-test.commands" -}}
-echo "✅💾 Persistent volume claim mounted successfully!"
-{{- end -}}
-
-{{- include "env0-agent.test" (dict "root" . "testName" "persistent-volume-claim" "commands" "env0-agent.persistent-volume-claim-test.commands" "persistentVolumeClaim" true) -}}

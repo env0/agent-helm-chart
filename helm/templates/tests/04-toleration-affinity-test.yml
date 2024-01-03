@@ -1,5 +1,0 @@
-{{- define "env0-agent.toleration-affinity-test.commands" -}}
-echo "✅💾 Pod scheduled successfully with provided toleration/affinity setting!"
-{{- end -}}
-
-{{- include "env0-agent.test" (dict "root" . "testName" "toleration-affinity" "commands" "env0-agent.toleration-affinity-test.commands" "tolerationsAndAffinity" true) -}}
