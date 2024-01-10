@@ -25,9 +25,13 @@ spec:
             {{ $k }}: {{ $v }}
             {{- end }}
             {{ end }}
-
           annotations:
             "cluster-autoscaler.kubernetes.io/safe-to-evict": "false"
+            {{- if .Values.podAdditionalAnnotations }}
+            {{- range $k, $v := .Values.podAdditionalAnnotations }}
+            {{ $k }}: {{ $v }}
+            {{- end }}
+            {{ end }}
         spec:
           volumes:
             {{ if not (hasKey .Values "env0StateEncryptionKey") }}
