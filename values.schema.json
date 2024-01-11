@@ -13,10 +13,14 @@
       "description": "The AWS_SECRET_ACCESS_KEY provided by env0 used to perform agent specific actions in env0's AWS account",
       "type": "string"
     },
-	"podAdditionalLabels": {
-	  "description": "Additional labels to be added to the agent pods",
-	  "type": "object"
-	},
+    "podAdditionalLabels": {
+      "description": "Additional labels to be added to the agent pods",
+      "type": "object"
+    },
+    "podAdditionalAnnotations": {
+      "description": "Additional annotations to be added to the agent pods",
+      "type": "object"
+    },
     "deploymentJobServiceAccountName": {
       "description": "An optional K8s service account name you wish to set for the env0 deployment pods",
       "type": "string"
