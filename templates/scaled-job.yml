@@ -28,6 +28,7 @@ spec:
 
           annotations:
             "cluster-autoscaler.kubernetes.io/safe-to-evict": "false"
+            "karpenter.sh/do-not-evict": "true"
         spec:
           volumes:
             {{ if not (hasKey .Values "env0StateEncryptionKey") }}
