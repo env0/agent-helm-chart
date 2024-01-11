@@ -27,6 +27,7 @@ spec:
             {{ end }}
           annotations:
             "cluster-autoscaler.kubernetes.io/safe-to-evict": "false"
+            "karpenter.sh/do-not-evict": "true"
             {{- if .Values.podAdditionalAnnotations }}
             {{- range $k, $v := .Values.podAdditionalAnnotations }}
             {{ $k }}: {{ $v }}
