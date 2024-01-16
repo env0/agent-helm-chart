@@ -29,6 +29,11 @@ spec:
           annotations:
             "cluster-autoscaler.kubernetes.io/safe-to-evict": "false"
             "karpenter.sh/do-not-evict": "true"
+            {{- if .Values.podAdditionalAnnotations }}
+            {{- range $k, $v := .Values.podAdditionalAnnotations }}
+            "{{ $k }}": "{{ $v }}"
+            {{- end }}
+            {{ end }}            
         spec:
           volumes:
             {{ if not (hasKey .Values "env0StateEncryptionKey") }}
@@ -202,6 +207,14 @@ spec:
                   value: {{ .Values.logger.format }}
                 - name: CONSOLE_LOGS_LEVEL
                   value: {{ .Values.logger.level }}
+                {{ end }}
+                {{ if .Values.podAdditionalEnvVars }}
+                {{- range $key, $value := .Values.podAdditionalEnvVars }}
+                - name: {{ $key }}
+                  value: {{ $value | quote }}
+                {{- end }}
+                - name: ADDITIONAL_ENV_VARS
+                  value: '[{{- $keys := ""}}{{- range $key, $value := .Values.podAdditionalEnvVars }}{{- if $keys }}{{- $keys = printf "\"%s\",\"%s\"" $keys $key }}{{- else }}{{- $keys = $key }}{{- end }}{{- end }}{{- $keys }}]'
                 {{ end }}
 
 

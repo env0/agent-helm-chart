@@ -315,6 +315,20 @@
         }
       },
       "type": "object"
+    },
+    "podAdditionalEnvVars": {
+      "description": "Additional Environment variables to be passed to the agent pods, which will also be passed to the deployment process",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "podAdditionalAnnotations": {
+      "description": "Additional annotations to be set on deployment pods",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
     }
   },
   "required": [
