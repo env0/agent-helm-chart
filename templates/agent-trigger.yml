@@ -13,8 +13,18 @@ spec:
     metadata:
       labels:
         env0: agent-trigger
+        {{- if .Values.agentAdditionalLabels }}
+        {{- range $k, $v := .Values.agentAdditionalLabels }}
+        {{ $k }}: {{ $v }}
+        {{- end }}
+        {{ end }}
       annotations:
-        forcePodRestart: {{ randAlphaNum 5 | quote }}
+        forcePodRestart: {{ randAlphaNum 5 | quote }}     
+        {{- if .Values.agentAdditionalAnnotations }}
+        {{- range $k, $v := .Values.agentAdditionalAnnotations }}
+        "{{ $k }}": "{{ $v }}"
+        {{- end }}
+        {{ end }}  
     spec:
       serviceAccountName: agent-trigger-service-account
       restartPolicy: Always
