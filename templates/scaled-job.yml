@@ -56,9 +56,8 @@ spec:
                     name: {{ . }}
                 {{- end }}
             {{ end }}
-          {{ if hasKey .Values "agentImagePullSecret" }}
-          imagePullSecrets:
-            - name: env0-image-pull-secret-{{ .Values.agentKey }}
+          {{ if .Values.agentImagePullSecret }}
+          imagePullSecrets: {{ toYaml .Values.agentImagePullSecret | nindent 12 }}
           {{ end }}
           {{ if .Values.deploymentJobServiceAccountName }}
           serviceAccountName: {{ .Values.deploymentJobServiceAccountName }}

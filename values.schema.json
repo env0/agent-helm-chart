@@ -145,7 +145,7 @@
     },
     "agentImagePullSecret": {
       "description": "Agent image pull secret",
-      "type": "string"
+      "type": "array"
     },
     "tolerations": {
       "description": "Kubernetes tolerations on the containers",

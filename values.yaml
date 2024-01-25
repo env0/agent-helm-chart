@@ -10,3 +10,4 @@ limits:
   memory: 1500Mi
 jobHistoryLimitSuccess: 10
 jobHistoryLimitFailure: 10
+agentImagePullSecret: []
