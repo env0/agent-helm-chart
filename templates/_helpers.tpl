@@ -19,11 +19,17 @@
 {{ end }}
 {{- end -}}
 
-{{- define "env0-agent.strict-security-context" -}}
-{{ if .Values.strictSecurityContext }}
+{{- define "env0-agent.strict-security-context" }}
+{{- if .Values.strictSecurityContext }}
 securityContext:
+  allowPrivilegeEscalation: false
+  seccompProfile:
+      type: RuntimeDefault
+  capabilities:
+    drop:
+      - ALL
   readOnlyRootFilesystem: true
   runAsNonRoot: true
   runAsUser: 1000 # run as non-root "node" user
-{{ end }}
-{{- end -}}
+{{- end }}
+{{- end }}
