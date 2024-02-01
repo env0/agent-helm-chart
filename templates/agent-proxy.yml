@@ -42,9 +42,8 @@ spec:
             {{- end }}
       {{ end }}
       restartPolicy: Always
-      {{ if hasKey .Values "agentImagePullSecret" }}
-      imagePullSecrets:
-        - name: env0-image-pull-secret-{{ .Values.agentKey }}
+      {{ if .Values.agentImagePullSecret }}
+      imagePullSecrets: {{ toYaml .Values.agentImagePullSecret | nindent 8 }}
       {{ end }}
       containers:
         - name: env0-agent-proxy

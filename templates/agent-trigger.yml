@@ -31,9 +31,8 @@ spec:
       volumes:
         - name: tmp
           emptyDir: { }
-      {{ if hasKey .Values "agentImagePullSecret" }}
-      imagePullSecrets:
-        - name: env0-image-pull-secret-{{ .Values.agentKey }}
+      {{ if .Values.agentImagePullSecret }}
+      imagePullSecrets: {{ toYaml .Values.agentImagePullSecret | nindent 8 }}
       {{ end }}
       containers:
         - name: env0-agent-trigger

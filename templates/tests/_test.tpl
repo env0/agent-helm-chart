@@ -7,8 +7,9 @@ metadata:
     "helm.sh/hook": test
 spec:
   restartPolicy: Never
-  imagePullSecrets:
-    - name: env0-image-pull-secret-{{ .root.Values.agentKey }}
+  {{ if .root.Values.agentImagePullSecret }}
+  imagePullSecrets: {{ toYaml .root.Values.agentImagePullSecret | nindent 4 }}
+  {{ end }}
   {{ if .persistentVolumeClaim }}
   volumes:
     - name: env0-state-volume
