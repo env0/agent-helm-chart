@@ -214,7 +214,7 @@ spec:
                   value: {{ $value | quote }}
                 {{- end }}
                 - name: ADDITIONAL_ENV_VARS
-                  value: '[{{- $keys := ""}}{{- range $key, $value := .Values.podAdditionalEnvVars }}{{- if $keys }}{{- $keys = printf "\"%s\",\"%s\"" $keys $key }}{{- else }}{{- $keys = $key }}{{- end }}{{- end }}{{- $keys }}]'
+                  value: '[{{- $keys := list}}{{- range $key, $value := .Values.podAdditionalEnvVars }}{{ $keys = append $keys (printf "\"%s\"" $key) }}{{- end }}{{- $keys | join "," }}]'
                 {{ end }}
 
 
