@@ -56,6 +56,11 @@ spec:
                     name: {{ . }}
                 {{- end }}
             {{ end }}
+            {{- range $index, $secret := .Values.customSecretMounts }}
+            - name: {{ $secret.volumeName }}
+              secret:
+                secretName: {{ $secret.secretName }}
+            {{- end }}
           {{ if hasKey .Values "agentImagePullSecret" }}
           imagePullSecrets:
             - name: env0-image-pull-secret-{{ .Values.agentKey }}
@@ -109,6 +114,11 @@ spec:
                 - name: home
                   mountPath: /home
               {{ end }}
+              {{- range $index, $secretVolumeMount := .Values.customSecretMounts }}
+                - name: {{ $secretVolumeMount.volumeName }}
+                  mountPath: {{ $secretVolumeMount.mountPath }}
+                  readOnly: true
+              {{- end }}
               resources:
                 limits:
                   cpu: "{{ .Values.limits.cpu }}"
@@ -213,10 +223,18 @@ spec:
                 - name: {{ $key }}
                   value: {{ $value | quote }}
                 {{- end }}
-                - name: ADDITIONAL_ENV_VARS
-                  value: '[{{- $keys := list}}{{- range $key, $value := .Values.podAdditionalEnvVars }}{{ $keys = append $keys (printf "\"%s\"" $key) }}{{- end }}{{- $keys | join "," }}]'
                 {{ end }}
-
+                {{ if or .Values.podAdditionalEnvVars .Values.customSecrets }}
+                - name: ADDITIONAL_ENV_VARS
+                  value: '[{{- $keys := list}}{{- range $key, $value := .Values.podAdditionalEnvVars}}{{ $keys = append $keys (printf "\"%s\"" $key) }}{{- end }}{{- range $index, $secret := .Values.customSecrets}}{{ $keys = append $keys (printf "\"%s\"" $secret.envVarName) }}{{- end }}{{- $keys | join "," }}]'
+                {{ end }}
+                {{- range $index, $secret := .Values.customSecrets }}
+                - name: {{ $secret.envVarName }}
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ $secret.secretName }}
+                      key: {{ $secret.key }}
+                {{- end }}
 
           terminationGracePeriodSeconds: 18000
 

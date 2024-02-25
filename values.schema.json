@@ -343,6 +343,50 @@
       "additionalProperties": {
         "type": "string"
       }
+    },
+    "customSecretMounts": {
+      "description": "Custom Secrets Mounts",
+      "type": "array",
+      "items": { 
+        "type": "object",
+        "required": [ "volumeName", "secretName", "mountPath" ],
+        "properties": {
+          "volumeName": {
+            "type": "string",
+            "description": "The name of the volume mount (any string)"
+          },
+          "secretName": {
+            "type": "string",
+            "description": "The name of the kubernetes secret (e.g. my-secret)"
+          },
+          "mountPath": {
+            "type": "string",
+            "description": "The mount path within the container (e.g. /opt/secret)"
+          }
+        }
+      }
+    },
+    "customSecrets": {
+      "description": "Custom Environment Variable Secrets. Note: please also whitelist the secrets you need in the runner with `podAdditionalEnvVars`",
+      "type": "array",
+      "items": { 
+        "type": "object",
+        "required": [ "envVarName", "secretName", "key" ],
+        "properties": {
+          "envVarName": {
+            "type": "string",
+            "description": "The environment variable key name (e.g. DB_PASSWORD)"
+          },
+          "secretName": {
+            "type": "string",
+            "description": "The name of the kubernetes secret (e.g. my-secret)"
+          },
+          "key": {
+            "type": "string",
+            "description": "The secret key from secretName (e.g. db_password)"
+          }
+        }
+      }
     }
   },
   "required": [
