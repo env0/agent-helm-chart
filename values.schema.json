@@ -344,6 +344,98 @@
         "type": "string"
       }
     },
+    "providerInstallation": {
+      "description": "provider installation configuration for opentf / terraform, appended to terraformrc ( https://opentofu.org/docs/cli/config/config-file/#provider-installation )",
+      "type": "object",
+      "properties": {
+        "networkMirror": {
+          "description": "Configuration for network mirror",
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "description": "The URL of the network mirror"
+            },
+            "include": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The list of providers to include"
+            },
+            "exclude": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The list of providers to exclude"
+            }
+          },
+          "required": [
+            "url"
+          ]
+        },
+        "filesystemMirror": {
+          "description": "configuration for filesystem mirror",
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "The path of the filesystem mirror"
+            },
+            "include": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The list of providers to include"
+            },
+            "exclude": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The list of providers to exclude"
+            }
+          },
+          "required": [
+            "path"
+          ]
+        },
+        "direct": {
+          "type": "object",
+          "description": "Direct provider installation configuration",
+          "properties": {
+            "include": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The list of providers to include"
+            },
+            "exclude": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The list of providers to exclude"
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "include"
+              ]
+            },
+            {
+              "required": [
+                "exclude"
+              ]
+            }
+          ]
+        }
+      }
+    },
     "customSecretMounts": {
       "description": "Custom Secrets Mounts",
       "type": "array",

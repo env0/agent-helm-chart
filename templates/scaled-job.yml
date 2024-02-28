@@ -192,6 +192,10 @@ spec:
                       fieldPath: metadata.name
                 - name: DEPLOYMENT_JOB_SERVICE_ACCOUNT_NAME
                   value: {{ .Values.deploymentJobServiceAccountName | default "" }}
+                {{ if .Values.providerInstallation }}
+                - name: PROVIDER_INSTALLATION
+                  value: {{ .Values.providerInstallation | toJson | quote }}
+                {{ end }}
                 {{ if .Values.gitSslNoVerify }}
                 # even if this env var is empty it's consider 'true', so it's wrapped in an 'if'
                 - name: GIT_SSL_NO_VERIFY
