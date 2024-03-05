@@ -168,12 +168,38 @@
       "type": "string"
     },
     "customerVaultTokenEncoded": {
-      "description": "HCP Vault Token for secret fetching, base64 encoded",
+      "description": "HCP Vault Token for secret fetching, base64 encoded. This is DEPRECATED, use vault.encodedToken instead",
       "type": "string"
     },
     "customerVaultUrl": {
-      "description": "HCP Vault URL for secret fetching",
+      "description": "HCP Vault URL for secret fetching. This is DEPRECATED, use vault.address instead",
       "type": "string"
+    },
+    "vault": {
+      "description": "vault configuration. Pick one of the authentication methods - VAULT_TOKEN, username/password or k8s service account",
+      "properties": {
+        "encodedToken": {
+          "type": "string",
+          "description": "BASE64 encoded vault token, similar to VAULT_TOKEN env var"
+        },
+        "username": {
+          "type": "string",
+          "description": "vault username if you prefer to use username/password authentication"
+        },
+        "encodedPassword": {
+          "type": "string",
+          "description": "BASE64 encoded vault password if you prefer to use username/password authentication"
+        },
+        "role": {
+          "type": "string",
+          "description": "vault role name, use only for k8s service account authentication"
+        },
+        "address": {
+          "type": "string",
+          "description": "vault address, similar to VAULT_ADDR env var"
+        }
+      },
+      "type": "object"
     },
     "awsSecretsRegion": {
       "description": "AWS region used for SSM secret fetching",

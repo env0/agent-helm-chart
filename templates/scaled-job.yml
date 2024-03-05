@@ -163,8 +163,6 @@ spec:
                   value: "{{ .Values.apiGatewayUrl }}"
                 - name: AWS_SECRETS_REGION
                   value: "{{ .Values.awsSecretsRegion }}"
-                - name: CUSTOMER_VAULT_URL
-                  value: "{{ .Values.customerVaultUrl }}"
                 - name: GITLAB_ENTERPRISE_BASE_URL_SUFFIX
                   value: {{ .Values.gitlabEnterpriseBaseUrlSuffix | default "" | quote  }}
                 - name: GITHUB_ENTERPRISE_APP_CLIENT_SECRET
@@ -239,6 +237,15 @@ spec:
                       name: {{ $secret.secretName }}
                       key: {{ $secret.key }}
                 {{- end }}
+                {{ if .Values.vault }}
+                - name: CUSTOMER_VAULT_ROLE_NAME
+                  value: {{ .Values.vault.role | default "" | quote }}
+                - name: CUSTOMER_VAULT_ADDRESS
+                  value: {{ .Values.vault.address | quote }}
+                - name: CUSTOMER_VAULT_USERNAME
+                  value: {{ .Values.vault.username | default "" | quote }}
+                {{ end }}
+
 
           terminationGracePeriodSeconds: 18000
 
