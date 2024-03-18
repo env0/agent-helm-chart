@@ -197,6 +197,10 @@
         "address": {
           "type": "string",
           "description": "vault address, similar to VAULT_ADDR env var"
+        },
+        "loginPath": {
+          "type": "string",
+          "description": "authentication login path, default is 'kubernetes'"
         }
       },
       "type": "object"

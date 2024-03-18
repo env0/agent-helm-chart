@@ -244,6 +244,8 @@ spec:
                   value: {{ .Values.vault.address | quote }}
                 - name: CUSTOMER_VAULT_USERNAME
                   value: {{ .Values.vault.username | default "" | quote }}
+                - name: CUSTOMER_VAULT_LOGIN_PATH
+                  value: {{ .Values.vault.loginPath | default "" | quote }}
                 {{ end }}
 
 
