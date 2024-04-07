@@ -269,6 +269,10 @@
       "description": "GitHub Enterprise credentials, base64 encoded",
       "type": "string"
     },
+    "environmentOutputEncryptionKey": {
+      "description": "Key for encrypting environment sensitive outputs",
+      "type": "string"
+    },
     "alternativeLogLocation": {
       "description": "Configuration for alternative log storage",
       "properties": {
