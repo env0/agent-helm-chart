@@ -30,6 +30,7 @@ securityContext:
       - ALL
   readOnlyRootFilesystem: true
   runAsNonRoot: true
-  runAsUser: 1000 # run as non-root "node" user
+  runAsUser: {{ .Values.runAsUser | default 1000 }}
+  runAsGroup: {{ .Values.runAsGroup | default 1000 }}
 {{- end }}
 {{- end }}

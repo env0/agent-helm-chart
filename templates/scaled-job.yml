@@ -199,10 +199,18 @@ spec:
                 - name: GIT_SSL_NO_VERIFY
                   value: {{ .Values.gitSslNoVerify | quote }}
                 {{ end }}
-                {{ if .Values.strictSecurityContext }}
+                {{- if .Values.strictSecurityContext }}
                 - name: STRICT_SECURITY_CONTEXT
                   value: {{ .Values.strictSecurityContext | quote }}
-                {{ end }}
+                {{ if .Values.runAsUser }}
+                - name: USER_UID
+                  value: {{ .Values.runAsUser | quote }}
+                {{- end }}
+                {{- if .Values.runAsGroup }}
+                - name: USER_GID
+                  value: {{ .Values.runAsGroup | quote }}
+                {{- end }}
+                {{- end }}
                 {{ if .Values.customCertificates }}
                 - name: NODE_EXTRA_CA_CERTS
                   value: /etc/ssl/certs/ca-certificates.crt
