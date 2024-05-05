@@ -12,5 +12,5 @@ spec:
   {{ end }}
   resources:
     requests:
-      storage: 300Gi
+      storage: {{ .Values.env0PvcStorageSize | default "300Gi" }}
 {{ end }}

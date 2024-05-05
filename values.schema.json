@@ -29,6 +29,10 @@
       "description": "An optional persistent volume for existing storage",
       "type": "string"
     },
+    "env0PvcStorageSize": {
+      "description": "PVC request storage size (default: 300Gi)",
+      "type": "string"
+    },
     "env0ApiGwKeyEncoded": {
       "description": "env0 API GW API key",
       "type": "string"
