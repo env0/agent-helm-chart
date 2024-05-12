@@ -4,10 +4,10 @@ metadata:
   name: agent-trigger-role-{{ .Values.agentKey }}
   namespace: {{ .Release.Namespace }}
 rules:
-  - apiGroups: ["batch","extensions"]
+  - apiGroups: ["batch"]
     resources: ["jobs"]
     verbs: ["create", "list", "delete"]
-  - apiGroups: ["batch","extensions"]
+  - apiGroups: ["batch"]
     resources: ["cronjobs"]
     verbs: ["get"]
   - apiGroups: [""]
