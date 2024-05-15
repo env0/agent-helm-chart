@@ -323,8 +323,8 @@
       "description": "The UID to run the entrypoint of the container process. Only works when `strictSecurityContext` is set to true. Note: The `node` user UID also needs to be updated to match in your custom image."
     },
     "runAsGroup": {
-      "type": "string",
-      "default": "1000",
+      "type": "integer",
+      "default": 1000,
       "description": "The GID to run the entrypoint of the container process. Only works when `strictSecurityContext` is set to true. Note: The `node` user GID also needs to be updated to match in your custom image."
     },
     "customCertificates": {
