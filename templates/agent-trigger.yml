@@ -57,20 +57,17 @@ spec:
             limits:
               cpu: 500m
               memory: 1000Mi
+          envFrom:
+            - secretRef:
+                name: env0-secrets-{{ .Values.agentKey }}
+          {{- if .Values.env0ConfigSecretName }}
+            - secretRef:
+                name: {{ .Values.env0ConfigSecretName }}
+          {{- end }}
           env:
 {{ include "env0-agent.http-proxy" . | indent 12 }}
             - name: AGENT_VERSION
               value: {{ quote (regexReplaceAll ".*:" .Values.dockerImage "") }}
-            - name: AWS_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: env0-secrets-{{ .Values.agentKey }}
-                  key: AWS_ACCESS_KEY_ID
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: env0-secrets-{{ .Values.agentKey }}
-                  key: AWS_SECRET_ACCESS_KEY
             - name: OUTPUT_LOGS_LOG_GROUP_NAME
               value: "{{ .Values.outputLogsLogGroupName }}"
             - name: STAGE
@@ -96,12 +93,6 @@ spec:
             ### For calling the API GW
             - name: AGENT_API_GATEWAY_URL
               value: "{{ .Values.apiGatewayUrl }}"
-            - name: DEPLOYMENT_TRIGGER_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: env0-secrets-{{ .Values.agentKey }}
-                  key: DEPLOYMENT_TRIGGER_API_KEY
-
             ### K8S Metadata
             - name: K8S_POD_NAME
               valueFrom:

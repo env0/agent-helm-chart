@@ -131,6 +131,10 @@ spec:
               envFrom:
                 - secretRef:
                     name: env0-secrets-{{ .Values.agentKey }}
+              {{- if .Values.env0ConfigSecretName }}
+                - secretRef:
+                    name: {{ .Values.env0ConfigSecretName }}
+              {{- end }}
               env:
 {{ include "env0-agent.http-proxy" . | indent 16 }}
                 - name: AGENT_VERSION
@@ -165,16 +169,6 @@ spec:
                   value: "{{ .Values.awsSecretsRegion }}"
                 - name: GITLAB_ENTERPRISE_BASE_URL_SUFFIX
                   value: {{ .Values.gitlabEnterpriseBaseUrlSuffix | default "" | quote  }}
-                - name: GITHUB_ENTERPRISE_APP_CLIENT_SECRET
-                  valueFrom:
-                    secretKeyRef:
-                      name: env0-secrets-{{ .Values.agentKey }}
-                      key: GITHUB_ENTERPRISE_APP_CLIENT_SECRET
-                - name: GITHUB_ENTERPRISE_APP_PRIVATE_KEY
-                  valueFrom:
-                    secretKeyRef:
-                      name: env0-secrets-{{ .Values.agentKey }}
-                      key: GITHUB_ENTERPRISE_APP_PRIVATE_KEY
                 - name: GITHUB_ENTERPRISE_APP_ID
                   value: {{ .Values.githubEnterpriseAppId | default "" | quote }}
                 - name: GITHUB_ENTERPRISE_APP_CLIENT_ID
@@ -214,13 +208,6 @@ spec:
                 {{ if .Values.customCertificates }}
                 - name: NODE_EXTRA_CA_CERTS
                   value: /etc/ssl/certs/ca-certificates.crt
-                {{ end }}
-                {{ if .Values.env0StateEncryptionKey }}
-                - name: ENV0_STATE_ENCRYPTION_KEY
-                  valueFrom:
-                    secretKeyRef:
-                      name: env0-secrets-{{ .Values.agentKey }}
-                      key: ENV0_STATE_ENCRYPTION_KEY
                 {{ end }}
                 {{ if .Values.logger }}
                 - name: CONSOLE_LOGS_FORMAT

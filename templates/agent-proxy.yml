@@ -54,12 +54,14 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             # update-ca-certificates must be called before node starts
-            - update-ca-certificates; 
+            - update-ca-certificates;
               node --enable-source-maps run-proxy.js;
           resources:
             limits:
               {{ if .Values.agentProxy.limits }}
+              {{ if .Values.agentProxy.limits.cpu }}
               cpu: {{ .Values.agentProxy.limits.cpu }}
+              {{end}}
               memory: {{ .Values.agentProxy.limits.memory }}
               {{ else }}
               # backwards defaults
@@ -81,40 +83,17 @@ spec:
           {{ end }}
           ports:
             - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: env0-secrets-{{ .Values.agentKey }}
+            {{- if .Values.env0ConfigSecretName }}
+            - secretRef:
+                name: {{ .Values.env0ConfigSecretName }}
+            {{- end }}
           env:
-{{ include "env0-agent.http-proxy" . | indent 12 }}
-            - name: AWS_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: env0-secrets-{{ .Values.agentKey }}
-                  key: AWS_ACCESS_KEY_ID
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: env0-secrets-{{ .Values.agentKey }}
-                  key: AWS_SECRET_ACCESS_KEY
-            - name: BITBUCKET_SERVER_CREDENTIALS
-              valueFrom:
-                secretKeyRef:
-                  name: env0-secrets-{{ .Values.agentKey }}
-                  key: BITBUCKET_SERVER_CREDENTIALS
-            - name: GITLAB_ENTERPRISE_CREDENTIALS
-              valueFrom:
-                secretKeyRef:
-                  name: env0-secrets-{{ .Values.agentKey }}
-                  key: GITLAB_ENTERPRISE_CREDENTIALS
+            {{- include "env0-agent.http-proxy" . | indent 12 }}
             - name: GITLAB_ENTERPRISE_BASE_URL_SUFFIX
               value: {{ .Values.gitlabEnterpriseBaseUrlSuffix | default "" | quote  }}
-            - name: GITHUB_ENTERPRISE_APP_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: env0-secrets-{{ .Values.agentKey }}
-                  key: GITHUB_ENTERPRISE_APP_CLIENT_SECRET
-            - name: GITHUB_ENTERPRISE_APP_PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: env0-secrets-{{ .Values.agentKey }}
-                  key: GITHUB_ENTERPRISE_APP_PRIVATE_KEY
             - name: GITHUB_ENTERPRISE_APP_ID
               value: {{ .Values.githubEnterpriseAppId | default "" | quote }}
             - name: GITHUB_ENTERPRISE_APP_CLIENT_ID
@@ -129,16 +108,9 @@ spec:
               value: "{{ .Values.isSelfHosted }}"
             - name: OUTPUT_LOGS_LOG_GROUP_NAME
               value: "{{ .Values.outputLogsLogGroupName }}"
-
               ### For calling the API GW
             - name: AGENT_API_GATEWAY_URL
               value: "{{ .Values.apiGatewayUrl }}"
-            - name: DEPLOYMENT_TRIGGER_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: env0-secrets-{{ .Values.agentKey }}
-                  key: DEPLOYMENT_TRIGGER_API_KEY
-
             {{ if .Values.customCertificates }}
             - name: NODE_EXTRA_CA_CERTS
               value: /etc/ssl/certs/ca-certificates.crt
