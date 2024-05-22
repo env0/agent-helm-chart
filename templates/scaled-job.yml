@@ -1,5 +1,4 @@
 {{- $stateMountPath := ternary "/mnt/public/" .Values.stateMountPath (.Values.strictSecurityContext | default false) -}}
-
 # a cron job that never runs.
 # its job template is used to trigger jobs via k8s api
 apiVersion: {{ if .Capabilities.APIVersions.Has "batch/v1/CronJob" }}batch/v1{{ else }}batch/v1beta1{{ end }}
@@ -36,11 +35,11 @@ spec:
             {{ end }}            
         spec:
           volumes:
-            {{ if not (hasKey .Values "env0StateEncryptionKey") }}
+            {{- if (eq (include "env0-agent.shouldUsePVC" .) "true") }}
             - name: env0-state-volume
               persistentVolumeClaim:
                 claimName: env0-state-volume-claim
-            {{ end }}
+            {{- end }}
             - name: tmp
               emptyDir: { }
             - name: home
@@ -97,10 +96,10 @@ spec:
                 - update-ca-certificates;
                   node --enable-source-maps main.js;
               volumeMounts:
-              {{ if not (hasKey .Values "env0StateEncryptionKey") }}
+              {{- if (eq (include "env0-agent.shouldUsePVC" .) "true") }}
                 - name: env0-state-volume
                   mountPath: {{ $stateMountPath }}
-              {{ end }}
+              {{- end }}
               {{ if .Values.customCertificates }}
                 - name: etc-ssl-certs
                   mountPath: /etc/ssl/certs

@@ -34,3 +34,25 @@ securityContext:
   runAsGroup: {{ .Values.runAsGroup | default 1000 }}
 {{- end }}
 {{- end }}
+
+{{- define "env0-agent.shouldUsePVC" -}}
+{{- $secretValue := dict -}}
+{{- if (hasKey .Values "env0ConfigSecretName") -}}
+  {{- $secretValue = (lookup "v1" "Secret" .Release.Namespace .Values.env0ConfigSecretName).data -}}
+{{- end -}}
+
+{{- if (hasKey .Values "env0StateEncryptionKey") -}}
+  false
+{{- else if (not (hasKey .Values "env0ConfigSecretName")) -}}
+{{- /* no env0StateEncryptionKey in Values AND no env0ConfigSecretName provided */ -}}
+  true
+{{- else -}}
+  {{- if (hasKey $secretValue "ENV0_STATE_ENCRYPTION_KEY") -}}
+  {{- /* k8s Secret contains ENV0_STATE_ENCRYPTION_KEY - no need for PVC */ -}}
+    false
+  {{- else -}}
+  {{- /* k8s Secret does NOT contain ENV0_STATE_ENCRYPTION_KEY */ -}}
+    true
+  {{- end -}}
+{{- end -}}
+{{- end -}}

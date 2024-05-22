@@ -1,4 +1,4 @@
-{{ if not (hasKey .Values "env0StateEncryptionKey") }}
+{{- if (eq (include "env0-agent.shouldUsePVC" .) "true") }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
