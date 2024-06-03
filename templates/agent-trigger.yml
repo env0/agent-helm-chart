@@ -14,17 +14,13 @@ spec:
       labels:
         env0: agent-trigger
         {{- if .Values.agentAdditionalLabels }}
-        {{- range $k, $v := .Values.agentAdditionalLabels }}
-        {{ $k }}: {{ $v }}
+          {{- .Values.agentAdditionalLabels | toYaml | nindent 8 -}}
         {{- end }}
-        {{ end }}
       annotations:
-        forcePodRestart: {{ randAlphaNum 5 | quote }}     
+        forcePodRestart: {{ randAlphaNum 5 | quote }}
         {{- if .Values.agentAdditionalAnnotations }}
-        {{- range $k, $v := .Values.agentAdditionalAnnotations }}
-        "{{ $k }}": "{{ $v }}"
+          {{- .Values.agentAdditionalAnnotations | toYaml | nindent 8 -}}
         {{- end }}
-        {{ end }}  
     spec:
       serviceAccountName: agent-trigger-service-account
       restartPolicy: Always
@@ -104,13 +100,5 @@ spec:
             - name: CONSOLE_LOGS_LEVEL
               value: {{ .Values.logger.level }}
             {{ end }}
-      {{ if .Values.tolerations }}
-      # Warning - every whitespace here matters
-      tolerations: {{ range $i, $toleration := .Values.tolerations }}
-        -
-        {{ range $k, $v := $toleration }}  {{ $k }}: {{ $v }}
-        {{ end }}{{ end }}
-      {{ end }}
-      {{ if .Values.affinity }}
-      affinity: {{ .Values.affinity | toYaml | trim | nindent 8 }}
-      {{ end }}
+      {{- include "env0-agent.tolerations" .Values.tolerations | nindent 6 }}
+      {{- include "env0-agent.affinity" .Values.affinity | nindent 6 }}

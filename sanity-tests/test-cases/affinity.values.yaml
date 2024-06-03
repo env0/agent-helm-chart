@@ -1,0 +1,9 @@
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: nodegroup
+              operator: In
+              values:
+                - env0-system

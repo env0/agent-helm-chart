@@ -13,10 +13,36 @@
       "description": "The AWS_SECRET_ACCESS_KEY provided by env0 used to perform agent specific actions in env0's AWS account",
       "type": "string"
     },
+
     "podAdditionalLabels": {
-      "description": "Additional labels to be added to the agent pods",
-      "type": "object"
+      "description": "Additional labels to be set on deployment pods",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
     },
+    "agentAdditionalLabels": {
+      "description": "Additional labels to be set on agent (trigger/proxy) pods",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "podAdditionalAnnotations": {
+      "description": "Additional annotations to be set on deployment pods",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "agentAdditionalAnnotations": {
+      "description": "Additional annotations to be set on agent (trigger/proxy) pods",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+
     "deploymentJobServiceAccountName": {
       "description": "An optional K8s service account name you wish to set for the env0 deployment pods",
       "type": "string"
@@ -151,6 +177,7 @@
       "description": "Agent image pull secret",
       "type": "string"
     },
+
     "tolerations": {
       "description": "Kubernetes tolerations on the containers",
       "type": "array"
@@ -160,9 +187,10 @@
       "$schema": "agent/helm/schemas/kubernetesjsonschema.dev/v1.10.3-standalone/affinity.json"
     },
     "deploymentAffinity": {
-      "description": "Kubernetes affinity for deployment containers, This will override the default affinity for deployment pods",
+      "description": "Kubernetes affinity for deployment pods, This will override the default affinity for deployment pods",
       "$schema": "agent/helm/schemas/kubernetesjsonschema.dev/v1.10.3-standalone/affinity.json"
     },
+
     "customerAwsAccessKeyIdEncoded": {
       "description": "AWS access key used for SSM secret fetching, base64 encoded",
       "type": "string"
@@ -364,34 +392,7 @@
       },
       "type": "object"
     },
-    "podAdditionalEnvVars": {
-      "description": "Additional Environment variables to be passed to the agent pods, which will also be passed to the deployment process",
-      "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      }
-    },
-    "podAdditionalAnnotations": {
-      "description": "Additional annotations to be set on deployment pods",
-      "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      }
-    },
-    "agentAdditionalLabels": {
-      "description": "Additional labels to be set on agent (trigger/proxy) pods",
-      "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      }
-    },
-    "agentAdditionalAnnotations": {
-      "description": "Additional annotations to be set on agent (trigger/proxy) pods",
-      "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      }
-    },
+
     "providerInstallation": {
       "description": "provider installation configuration for opentf / terraform, appended to terraformrc ( https://opentofu.org/docs/cli/config/config-file/#provider-installation )",
       "type": "object",
@@ -484,30 +485,16 @@
         }
       }
     },
-    "customSecretMounts": {
-      "description": "Custom Secrets Mounts",
-      "type": "array",
-      "items": { 
-        "type": "object",
-        "required": [ "volumeName", "secretName", "mountPath" ],
-        "properties": {
-          "volumeName": {
-            "type": "string",
-            "description": "The name of the volume mount (any string)"
-          },
-          "secretName": {
-            "type": "string",
-            "description": "The name of the kubernetes secret (e.g. my-secret)"
-          },
-          "mountPath": {
-            "type": "string",
-            "description": "The mount path within the container (e.g. /opt/secret)"
-          }
-        }
+
+    "podAdditionalEnvVars": {
+      "description": "Additional Environment variables to be passed to the deployment pod, which will also be passed to the deployment process",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
       }
     },
     "customSecrets": {
-      "description": "Custom Environment Variable Secrets. Note: please also whitelist the secrets you need in the runner with `podAdditionalEnvVars`",
+      "description": "Custom Environment Variable Secrets.",
       "type": "array",
       "items": { 
         "type": "object",
@@ -528,6 +515,29 @@
         }
       }
     },
+    "customSecretMounts": {
+      "description": "Custom Secrets Mounts",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "volumeName", "secretName", "mountPath" ],
+        "properties": {
+          "volumeName": {
+            "type": "string",
+            "description": "The name of the volume mount (any string)"
+          },
+          "secretName": {
+            "type": "string",
+            "description": "The name of the kubernetes secret (e.g. my-secret)"
+          },
+          "mountPath": {
+            "type": "string",
+            "description": "The mount path within the container (e.g. /opt/secret)"
+          }
+        }
+      }
+    },
+
     "env0ConfigSecretName": {
       "description": "K8s Secret Name that contains secrets and credentials used to configure env0",
       "type": "string"

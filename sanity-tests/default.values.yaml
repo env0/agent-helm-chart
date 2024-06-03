@@ -1,0 +1,9 @@
+"agentKey": "shag-test"
+"apiGatewayUrl": "https://shag-test.agent.env0.com/shag-test"
+"awsAccessKeyIdEncoded": "dGVzdF9hY2Nlc3Nfa2V5"
+"awsSecretAccessKeyEncoded": "dGVzdF9zZWNyZXRfa2V5"
+"env0ApiGwKeyEncoded": "dGVzdF9hcGlfZ3dfa2V5"
+"isSelfHosted": "true"
+"outputLogsLogGroupName": "prerequisites-dev-k8s-shag-logs"
+stage: dev
+dockerImage: ghcr.io/env0/deployment-agent:dev

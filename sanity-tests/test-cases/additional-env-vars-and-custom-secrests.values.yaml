@@ -1,0 +1,11 @@
+podAdditionalEnvVars:
+  SOME_API_URL: https://api.example.com
+  TENANT_ID: "12345"
+
+customSecrets:
+  - envVarName: SOME_API_KEY
+    secretName: some-api-key
+    key: api_key
+  - envVarName: SOME_API_SECRET
+    secretName: some-api-secret
+    key: api_secret

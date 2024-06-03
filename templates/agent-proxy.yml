@@ -1,6 +1,5 @@
-{{ if .Values.agentProxy }}
-{{ if .Values.agentProxy.install }}
-
+{{- if .Values.agentProxy }}
+{{- if .Values.agentProxy.install }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -17,30 +16,16 @@ spec:
       labels:
         env0: agent-proxy
         {{- if .Values.agentAdditionalLabels }}
-        {{- range $k, $v := .Values.agentAdditionalLabels }}
-        {{ $k }}: {{ $v }}
+          {{- .Values.agentAdditionalLabels | toYaml | nindent 8 -}}
         {{- end }}
-        {{ end }}
       annotations:
         forcePodRestart: {{ randAlphaNum 5 | quote }}
         {{- if .Values.agentAdditionalAnnotations }}
-        {{- range $k, $v := .Values.agentAdditionalAnnotations }}
-        "{{ $k }}": "{{ $v }}"
+          {{- .Values.agentAdditionalAnnotations | toYaml | nindent 8 -}}
         {{- end }}
-        {{ end }}  
     spec:
-      {{ if .Values.customCertificates }}
       volumes:
-        - name: etc-ssl-certs
-          emptyDir: { }
-        - name: custom-certificates
-          projected:
-            sources:
-            {{- range .Values.customCertificates }}
-            - secret:
-                name: {{ . }}
-            {{- end }}
-      {{ end }}
+        {{- include "env0-agent.customCertificatesVolumes" . | nindent 10 }}
       restartPolicy: Always
       {{ if hasKey .Values "agentImagePullSecret" }}
       imagePullSecrets:
@@ -73,14 +58,8 @@ spec:
               cpu: "{{ .Values.agentProxy.requests.cpu }}"
               memory: "{{ .Values.agentProxy.requests.memory }}"
             {{ end }}
-          {{ if .Values.customCertificates }}
           volumeMounts:
-            - name: etc-ssl-certs
-              mountPath: /etc/ssl/certs
-            - name: custom-certificates
-              mountPath: /usr/local/share/ca-certificates
-              readOnly: true          
-          {{ end }}
+            {{- include "env0-agent.customCertificatesVolumesMounts" . | nindent 12 }}
           ports:
             - containerPort: 8000
           envFrom:
@@ -111,10 +90,7 @@ spec:
               ### For calling the API GW
             - name: AGENT_API_GATEWAY_URL
               value: "{{ .Values.apiGatewayUrl }}"
-            {{ if .Values.customCertificates }}
-            - name: NODE_EXTRA_CA_CERTS
-              value: /etc/ssl/certs/ca-certificates.crt
-            {{ end }}
+            {{- include "env0-agent.customCertificatesNodeOptions" . | nindent 12 }}
             {{ if .Values.agentProxy.enableVcsWebhooksProxy }}
             - name: ENABLE_VCS_WEBHOOKS_PROXY
               value: "true"
@@ -130,15 +106,7 @@ spec:
             - name: CONSOLE_LOGS_LEVEL
               value: {{ .Values.logger.level }}
             {{ end }}
-      {{ if .Values.tolerations }}
-      # Warning - every whitespace here matters
-      tolerations: {{ range $i, $toleration := .Values.tolerations }}
-        -
-        {{ range $k, $v := $toleration }}  {{ $k }}: {{ $v }}
-        {{ end }}{{ end }}
-      {{ end }}
-      {{ if .Values.affinity }}
-      affinity: {{ .Values.affinity | toYaml | trim | nindent 8 }}
-      {{ end }}
-{{ end }}
-{{ end }}
+      {{- include "env0-agent.tolerations" .Values.tolerations | nindent 6 -}}
+      {{- include "env0-agent.affinity" .Values.affinity | nindent 6 -}}
+{{- end }}
+{{- end }}

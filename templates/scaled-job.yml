@@ -1,4 +1,5 @@
 {{- $stateMountPath := ternary "/mnt/public/" .Values.stateMountPath (.Values.strictSecurityContext | default false) -}}
+
 # a cron job that never runs.
 # its job template is used to trigger jobs via k8s api
 apiVersion: {{ if .Capabilities.APIVersions.Has "batch/v1/CronJob" }}batch/v1{{ else }}batch/v1beta1{{ end }}
@@ -9,7 +10,7 @@ spec:
   suspend: true                 # ensures this cron job never runs
   schedule: 0 0 1 1 1           # but a valid cron exprssion is still required
   jobTemplate:
-      # describes the [job template](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/)
+    # describes the [job template](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/)
     spec:
       parallelism: 1 # [max number of desired pods](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/#controlling-parallelism)
       completions: 1 # [desired number of successfully finished pods](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/#controlling-parallelism)
@@ -20,19 +21,14 @@ spec:
           labels:
             env0: agent-deployment
             {{- if .Values.podAdditionalLabels }}
-            {{- range $k, $v := .Values.podAdditionalLabels }}
-            {{ $k }}: {{ $v }}
+              {{- .Values.podAdditionalLabels | toYaml | nindent 12 -}}
             {{- end }}
-            {{ end }}
-
           annotations:
-            "cluster-autoscaler.kubernetes.io/safe-to-evict": "false"
-            "karpenter.sh/do-not-evict": "true"
+            cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+            karpenter.sh/do-not-evict: "true"
             {{- if .Values.podAdditionalAnnotations }}
-            {{- range $k, $v := .Values.podAdditionalAnnotations }}
-            "{{ $k }}": "{{ $v }}"
+              {{- .Values.podAdditionalAnnotations | toYaml | nindent 12 -}}
             {{- end }}
-            {{ end }}            
         spec:
           volumes:
             {{- if (eq (include "env0-agent.shouldUsePVC" .) "true") }}
@@ -44,17 +40,7 @@ spec:
               emptyDir: { }
             - name: home
               emptyDir: { }
-            {{ if .Values.customCertificates }}
-            - name: etc-ssl-certs
-              emptyDir: { }
-            - name: custom-certificates
-              projected:
-                sources:
-                {{- range .Values.customCertificates }}
-                - secret:
-                    name: {{ . }}
-                {{- end }}
-            {{ end }}
+            {{- include "env0-agent.customCertificatesVolumes" . | nindent 12 }}
             {{- range $index, $secret := .Values.customSecretMounts }}
             - name: {{ $secret.volumeName }}
               secret:
@@ -76,7 +62,7 @@ spec:
             - name: init-container
   {{ include "env0-agent.strict-security-context" . | indent 14 }}
               image: {{ .Values.dockerImage }}
-              command: [ "/bin/sh", "-c"]
+              command: [ "/bin/sh", "-c" ]
               args:
                 - echo 'Copy home dir content to the mount';
                   cp -rvp /home/* /home-mount;
@@ -87,10 +73,10 @@ spec:
           {{ end }}
           containers:
             - name: deployment-container
-  {{ include "env0-agent.strict-security-context" . | indent 14 }}
+              {{ include "env0-agent.strict-security-context" . | indent 14 }}
               image: {{ .Values.dockerImage }}
               imagePullPolicy: {{ default "Always" .Values.agentImagePullPolicy }}
-              command: ["/bin/sh", "-c"]
+              command: [ "/bin/sh", "-c" ]
               args:
                 # update-ca-certificates must be called before node starts
                 - update-ca-certificates;
@@ -100,13 +86,7 @@ spec:
                 - name: env0-state-volume
                   mountPath: {{ $stateMountPath }}
               {{- end }}
-              {{ if .Values.customCertificates }}
-                - name: etc-ssl-certs
-                  mountPath: /etc/ssl/certs
-                - name: custom-certificates
-                  mountPath: /usr/local/share/ca-certificates
-                  readOnly: true
-              {{ end }}
+                {{- include "env0-agent.customCertificatesVolumesMounts" . | nindent 16 }}
               {{ if .Values.strictSecurityContext }}
                 - name: tmp
                   mountPath: /tmp
@@ -204,33 +184,14 @@ spec:
                   value: {{ .Values.runAsGroup | quote }}
                 {{- end }}
                 {{- end }}
-                {{ if .Values.customCertificates }}
-                - name: NODE_EXTRA_CA_CERTS
-                  value: /etc/ssl/certs/ca-certificates.crt
-                {{ end }}
+                {{- include "env0-agent.customCertificatesNodeOptions" . | nindent 16 }}
                 {{ if .Values.logger }}
                 - name: CONSOLE_LOGS_FORMAT
                   value: {{ .Values.logger.format }}
                 - name: CONSOLE_LOGS_LEVEL
                   value: {{ .Values.logger.level }}
                 {{ end }}
-                {{ if .Values.podAdditionalEnvVars }}
-                {{- range $key, $value := .Values.podAdditionalEnvVars }}
-                - name: {{ $key }}
-                  value: {{ $value | quote }}
-                {{- end }}
-                {{ end }}
-                {{ if or .Values.podAdditionalEnvVars .Values.customSecrets }}
-                - name: ADDITIONAL_ENV_VARS
-                  value: '[{{- $keys := list}}{{- range $key, $value := .Values.podAdditionalEnvVars}}{{ $keys = append $keys (printf "\"%s\"" $key) }}{{- end }}{{- range $index, $secret := .Values.customSecrets}}{{ $keys = append $keys (printf "\"%s\"" $secret.envVarName) }}{{- end }}{{- $keys | join "," }}]'
-                {{ end }}
-                {{- range $index, $secret := .Values.customSecrets }}
-                - name: {{ $secret.envVarName }}
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ $secret.secretName }}
-                      key: {{ $secret.key }}
-                {{- end }}
+                {{- include "env0-agent.additional-env-vars-and-custom-secrets" . | nindent 16}}
                 {{ if .Values.vault }}
                 - name: CUSTOMER_VAULT_ROLE_NAME
                   value: {{ .Values.vault.role | default "" | quote }}
@@ -241,20 +202,7 @@ spec:
                 - name: CUSTOMER_VAULT_LOGIN_PATH
                   value: {{ .Values.vault.loginPath | default "" | quote }}
                 {{ end }}
-
-
           terminationGracePeriodSeconds: 18000
-
           restartPolicy: Never
-          {{ if .Values.tolerations }}
-          # Warning - every whitespace here matters
-          tolerations: {{ range $i, $toleration := .Values.tolerations }}
-            -
-            {{ range $k, $v := $toleration }}  {{ $k }}: {{ $v }}
-            {{ end }}{{ end }}
-          {{ end }}
-          {{ if .Values.deploymentAffinity }}
-          affinity: {{ .Values.deploymentAffinity | toYaml | trim | nindent 12 }}
-          {{ else if .Values.affinity }}
-          affinity: {{ .Values.affinity | toYaml | trim | nindent 12 }}
-          {{ end }}
+          {{- include "env0-agent.tolerations" .Values.tolerations | nindent 10 -}}
+          {{- include "env0-agent.affinity" (ternary .Values.affinity .Values.deploymentAffinity (empty .Values.deploymentAffinity)) | nindent 10 -}}

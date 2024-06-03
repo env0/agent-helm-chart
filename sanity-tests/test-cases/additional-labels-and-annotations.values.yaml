@@ -1,0 +1,12 @@
+podAdditionalLabels:
+  deployment-label1: value1
+  deployment-label2: value2
+podAdditionalAnnotations:
+  deployment-annotation1: value1
+  deployment-annotation2: value2
+agentAdditionalLabels:
+  agent-label1: value1
+  agent-label2: value2
+agentAdditionalAnnotations:
+  agent-annotation1: value1
+  agent-annotation2: value2
