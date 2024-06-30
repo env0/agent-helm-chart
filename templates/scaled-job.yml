@@ -179,11 +179,11 @@ spec:
                   value: {{ .Values.strictSecurityContext | quote }}
                 {{ if .Values.runAsUser }}
                 - name: USER_UID
-                  value: {{ .Values.runAsUser | quote }}
+                  value: {{ .Values.runAsUser | int | quote }}
                 {{- end }}
                 {{- if .Values.runAsGroup }}
                 - name: USER_GID
-                  value: {{ .Values.runAsGroup | quote }}
+                  value: {{ .Values.runAsGroup | int | quote }}
                 {{- end }}
                 {{- end }}
                 {{- include "env0-agent.customCertificatesNodeOptions" . | nindent 16 }}

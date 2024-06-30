@@ -30,8 +30,8 @@ securityContext:
       - ALL
   readOnlyRootFilesystem: true
   runAsNonRoot: true
-  runAsUser: {{ .Values.runAsUser | default 1000 }}
-  runAsGroup: {{ .Values.runAsGroup | default 1000 }}
+  runAsUser: {{ .Values.runAsUser | default 1000 | int }}
+  runAsGroup: {{ .Values.runAsGroup | default 1000 | int }}
 {{- end }}
 {{- end }}
 
