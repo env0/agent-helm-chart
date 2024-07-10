@@ -537,10 +537,23 @@
         }
       }
     },
-
     "env0ConfigSecretName": {
       "description": "K8s Secret Name that contains secrets and credentials used to configure env0",
       "type": "string"
+    },
+    "initContainer": {
+      "description": "array of custom init containers",
+      "type": "array",
+      "items": {
+        "$schema": "agent/helm/schemas/kubernetesjsonschema.dev/v1.10.3-standalone/init-container-v1.json"
+      } 
+    },
+    "customVolumeMounts": {
+      "description": "array of custom volume mounts, optionally to be used with the init container",
+      "type": "array",
+      "items": {
+        "$schema": "agent/helm/schemas/kubernetesjsonschema.dev/v1.10.3-standalone/volumemount-v1.json"
+      }
     }
   },
   "required": ["agentKey", "stage", "dockerImage", "stateMountPath", "limits", "agentProxy"],
