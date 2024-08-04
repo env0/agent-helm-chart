@@ -40,7 +40,7 @@ spec:
           args:
             # update-ca-certificates must be called before node starts
             - update-ca-certificates;
-              node --enable-source-maps run-proxy.js;
+              node --enable-source-maps --max-old-space-size=600 run-proxy.js;
           resources:
             limits:
               {{ if .Values.agentProxy.limits }}
@@ -51,7 +51,7 @@ spec:
               {{ else }}
               # backwards defaults
               cpu: 250m
-              memory: 500Mi
+              memory: 750Mi
               {{ end }}
             {{ if .Values.agentProxy.requests }}
             requests:
