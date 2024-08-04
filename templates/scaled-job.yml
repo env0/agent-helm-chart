@@ -26,6 +26,7 @@ spec:
           annotations:
             cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
             karpenter.sh/do-not-evict: "true"
+            karpenter.sh/do-not-disrupt: "true"
             {{- if .Values.podAdditionalAnnotations }}
               {{- .Values.podAdditionalAnnotations | toYaml | nindent 12 -}}
             {{- end }}
