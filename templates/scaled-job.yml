@@ -182,6 +182,10 @@ spec:
                 - name: PROVIDER_INSTALLATION
                   value: {{ .Values.providerInstallation | toJson | quote }}
                 {{ end }}
+                {{ if .Values.useOidcForAwsSsm }}
+                - name: USE_OIDC_FOR_AWS_SSM
+                  value: {{ .Values.useOidcForAwsSsm | quote }}
+                {{ end }}
                 {{ if .Values.gitSslNoVerify }}
                 # even if this env var is empty it's consider 'true', so it's wrapped in an 'if'
                 - name: GIT_SSL_NO_VERIFY

@@ -554,6 +554,10 @@
       "items": {
         "$schema": "agent/helm/schemas/kubernetesjsonschema.dev/v1.10.3-standalone/volumemount-v1.json"
       }
+    },
+    "useOidcForAwsSsm": {
+      "type": "boolean",
+      "description": "Use Env0 OIDC for AWS SSM secret fetching"
     }
   },
   "required": ["agentKey", "stage", "dockerImage", "stateMountPath", "limits", "agentProxy"],

@@ -37,14 +37,17 @@ securityContext:
 
 {{- define "env0-agent.shouldUsePVC" -}}
 {{- $secretValue := dict -}}
+
 {{- if (hasKey .Values "env0ConfigSecretName") -}}
   {{- $secretValue = (lookup "v1" "Secret" .Release.Namespace .Values.env0ConfigSecretName).data -}}
 {{- end -}}
 
 {{- if (hasKey .Values "env0StateEncryptionKey") -}}
   false
+{{- else if (not (hasKey .Values "isSelfHosted")) -}}
+  false
 {{- else if (not (hasKey .Values "env0ConfigSecretName")) -}}
-{{- /* no env0StateEncryptionKey in Values AND no env0ConfigSecretName provided */ -}}
+{{- /* no env0StateEncryptionKey or isSelfHosted in Values AND no env0ConfigSecretName provided */ -}}
   true
 {{- else -}}
   {{- if (hasKey $secretValue "ENV0_STATE_ENCRYPTION_KEY") -}}
