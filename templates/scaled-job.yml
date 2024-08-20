@@ -223,5 +223,5 @@ spec:
                 {{ end }}
           terminationGracePeriodSeconds: 18000
           restartPolicy: Never
-          {{- include "env0-agent.tolerations" .Values.tolerations | nindent 10 -}}
+          {{- include "env0-agent.tolerations" (ternary .Values.tolerations .Values.deploymentTolerations (empty .Values.deploymentTolerations)) | nindent 10 -}}
           {{- include "env0-agent.affinity" (ternary .Values.affinity .Values.deploymentAffinity (empty .Values.deploymentAffinity)) | nindent 10 -}}

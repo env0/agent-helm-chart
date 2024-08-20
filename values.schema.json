@@ -177,9 +177,12 @@
       "description": "Agent image pull secret",
       "type": "string"
     },
-
     "tolerations": {
       "description": "Kubernetes tolerations on the containers",
+      "type": "array"
+    },
+    "deploymentTolerations": {
+      "description": "Kubernetes tolerations for the deployment pods, This will override the default tolerations for deployment pods",
       "type": "array"
     },
     "affinity": {
