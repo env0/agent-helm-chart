@@ -76,6 +76,17 @@ spec:
               volumeMounts:
                 - name: home
                   mountPath: /home-mount
+              resources:
+                limits:
+                {{ if .Values.limits.cpu }}
+                  cpu: "{{ .Values.limits.cpu }}"
+                {{ end }}
+                  memory: "{{ .Values.limits.memory }}"
+                {{ if .Values.requests }}
+                requests:
+                  cpu: "{{ .Values.requests.cpu }}"
+                  memory: "{{ .Values.requests.memory }}"
+                {{ end }}
             {{- end }}
             {{- if .Values.initContainer }}
             {{ toYaml .Values.initContainer | nindent 12 }}
