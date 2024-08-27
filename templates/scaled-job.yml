@@ -196,6 +196,12 @@ spec:
                 {{ if .Values.useOidcForAwsSsm }}
                 - name: USE_OIDC_FOR_AWS_SSM
                   value: {{ .Values.useOidcForAwsSsm | quote }}
+                {{ if .Values.customRoleForOidcAwsSsm }}
+                - name: CUSTOM_ROLE_FOR_OIDC_AWS_SSM
+                  value: {{ .Values.customRoleForOidcAwsSsm.arn | quote }}
+                - name: CUSTOM_DURATION_FOR_OIDC_AWS_SSM
+                  value: {{ .Values.customRoleForOidcAwsSsm.duration | quote }}
+                {{ end }}
                 {{ end }}
                 {{ if .Values.gitSslNoVerify }}
                 # even if this env var is empty it's consider 'true', so it's wrapped in an 'if'

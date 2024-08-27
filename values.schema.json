@@ -561,6 +561,21 @@
     "useOidcForAwsSsm": {
       "type": "boolean",
       "description": "Use Env0 OIDC for AWS SSM secret fetching"
+    },
+    "customRoleForOidcAwsSsm": {
+      "description": "Custom role for AWS SSM secret fetching, Note: only used when useOidcForAwsSsm=true",
+      "properties": {
+        "duration": {
+          "type": "number",
+          "description": "The duration of the OIDC token in seconds"
+        },
+        "arn": {
+          "type": "string",
+          "description": "Custom role to assume via OIDC for AWS SSM secret fetching"
+        }
+      },
+      "required": ["arn"],
+      "type": "object"
     }
   },
   "required": ["agentKey", "stage", "dockerImage", "stateMountPath", "limits", "agentProxy"],
