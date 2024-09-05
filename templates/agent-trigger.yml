@@ -64,6 +64,8 @@ spec:
 {{ include "env0-agent.http-proxy" . | indent 12 }}
             - name: AGENT_VERSION
               value: {{ quote (regexReplaceAll ".*:" .Values.dockerImage "") }}
+            - name: K8S_VERSION
+              value: {{ .Capabilities.KubeVersion.Version }}
             - name: OUTPUT_LOGS_LOG_GROUP_NAME
               value: "{{ .Values.outputLogsLogGroupName }}"
             - name: STAGE
