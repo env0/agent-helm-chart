@@ -2,6 +2,8 @@
 stateMountPath: "/mnt/private/env0"
 agentProxy:
   install: true
+  replicas: 1
+  maxConcurrentRequests: 500
 #requests:
 #  cpu: 200m
 #  memory: 500Mi

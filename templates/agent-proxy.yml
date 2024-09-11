@@ -7,7 +7,7 @@ metadata:
   labels:
     env0: agent-proxy
 spec:
-  replicas: 1
+  replicas: {{ .Values.agentProxy.replicas }}
   selector:
     matchLabels:
       env0: agent-proxy
@@ -90,6 +90,8 @@ spec:
               ### For calling the API GW
             - name: AGENT_API_GATEWAY_URL
               value: "{{ .Values.apiGatewayUrl }}"
+            - name: MAX_CONCURRENT_REQUESTS
+              value: "{{ .Values.agentProxy.maxConcurrentRequests }}"
             {{- include "env0-agent.customCertificatesNodeOptions" . | nindent 12 }}
             {{ if .Values.agentProxy.enableVcsWebhooksProxy }}
             - name: ENABLE_VCS_WEBHOOKS_PROXY

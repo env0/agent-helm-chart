@@ -134,9 +134,17 @@
           "type": "boolean",
           "description": "Install Agent Proxy"
         },
+        "replicas": {
+          "type": "integer",
+          "description": "Number of replicas for the agent proxy"
+        },
         "enableVcsWebhooksProxy": {
           "type": "boolean",
           "description": "Enable proxying of VCS webhook requests from the agent to env0"
+        },
+        "maxConcurrentRequests": {
+          "type": "integer",
+          "description": "Maximum number of concurrent requests each proxy instance can handle"
         },
         "limits": {
           "description": "Pod's limits",
