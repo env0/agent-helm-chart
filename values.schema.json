@@ -182,7 +182,11 @@
       ]
     },
     "agentImagePullSecret": {
-      "description": "Agent image pull secret",
+      "description": "The agent Docker image pull secret. Required when the image is stored in a private registry and takes precedence over agentImagePullSecretRef",
+      "type": "string"
+    },
+    "agentImagePullSecretRef": {
+      "description": "The name of an existing k8s secret that holds the agent Docker image pull secret",
       "type": "string"
     },
     "tolerations": {

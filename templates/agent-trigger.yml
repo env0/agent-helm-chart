@@ -27,10 +27,10 @@ spec:
       volumes:
         - name: tmp
           emptyDir: { }
-      {{ if hasKey .Values "agentImagePullSecret" }}
+      {{- if or (hasKey .Values "agentImagePullSecret") (hasKey .Values "agentImagePullSecretRef") }}
       imagePullSecrets:
-        - name: env0-image-pull-secret-{{ .Values.agentKey }}
-      {{ end }}
+        - name: {{ if hasKey .Values "agentImagePullSecret" }}env0-image-pull-secret-{{ .Values.agentKey }}{{ else }}{{ .Values.agentImagePullSecretRef }}{{ end }}
+      {{- end }}
       containers:
         - name: env0-agent-trigger
   {{ include "env0-agent.strict-security-context" . | indent 10 }}
