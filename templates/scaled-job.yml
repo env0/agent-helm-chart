@@ -2,7 +2,7 @@
 
 # a cron job that never runs.
 # its job template is used to trigger jobs via k8s api
-apiVersion: {{ if .Capabilities.APIVersions.Has "batch/v1/CronJob" }}batch/v1{{ else }}batch/v1beta1{{ end }}
+apiVersion: batch/v1
 kind: CronJob       # describes the [job template](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/)
 metadata:
   name: {{ .Values.agentKey }}.deployment
