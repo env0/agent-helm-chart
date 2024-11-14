@@ -229,6 +229,22 @@
           "type": "string",
           "description": "BASE64 encoded vault token, similar to VAULT_TOKEN env var"
         },
+        "method": {
+          "type": "string",
+          "description": "Vault method login: 'token', 'password', 'service_account', 'certificate'"
+        },
+        "caCertificateSecretName": {
+          "type": "string",
+          "description": "For certificate login, specify the Kubernetes secret name for the CA certificate (optional). The key must be ca-cert"
+        },
+        "caDisable": {
+          "type": "boolean",
+          "description": "For certificate login, disable CA authorization (optional)"
+        },
+        "clientCertificateSecretName": {
+          "type": "string",
+          "description": "For certificate login, specify the Kubernetes secret name (required). The keys must be client-cert and client-key.\n for example: `kubectl create secret generic <secret-name> -n env0-agent --from-file=client-key=vault.key  --from-file=client-cert=vault.crt --from-file=ca-cert=ca-cert.pem`"
+        },
         "username": {
           "type": "string",
           "description": "vault username if you prefer to use username/password authentication"
@@ -239,7 +255,7 @@
         },
         "role": {
           "type": "string",
-          "description": "vault role name, use only for k8s service account authentication"
+          "description": "vault role name, use for k8s service account authentication or certificate"
         },
         "address": {
           "type": "string",
@@ -247,7 +263,7 @@
         },
         "loginPath": {
           "type": "string",
-          "description": "authentication login path, default is 'kubernetes'"
+          "description": "Authentication login path, default is vault default method path - kubernetes, userpass, etc."
         }
       },
       "type": "object"

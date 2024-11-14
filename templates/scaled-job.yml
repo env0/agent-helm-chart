@@ -228,13 +228,50 @@ spec:
                   value: {{ .Values.logger.level }}
                 {{ end }}
                 {{- include "env0-agent.additional-env-vars-and-custom-secrets" . | nindent 16}}
-                {{ if .Values.vault }}
-                - name: CUSTOMER_VAULT_ROLE_NAME
-                  value: {{ .Values.vault.role | default "" | quote }}
-                - name: CUSTOMER_VAULT_ADDRESS
-                  value: {{ .Values.vault.address | quote }}
+                {{ if and .Values.vault .Values.vault.method }}
+                - name: CUSTOMER_VAULT_LOGIN_METHOD
+                  value: {{ .Values.vault.method }}
+                {{ end }}
+                {{ if and .Values.vault .Values.vault.caDisable }}
+                - name: CUSTOMER_VAULT_DISABLE_VERIFY_CA
+                  value: {{ quote .Values.vault.caDisable }}
+                {{ end }}
+                {{ if and .Values.vault .Values.vault.caCertificateSecretName }}
+                - name: CUSTOMER_VAULT_CA_CERT
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.vault.caCertificateSecretName }}
+                      key: ca-cert
+                {{ end }}
+                {{ if and .Values.vault .Values.vault.clientCertificateSecretName }}
+                - name: CUSTOMER_VAULT_CERT
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.vault.clientCertificateSecretName }}
+                      key: client-cert
+                - name: CUSTOMER_VAULT_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.vault.clientCertificateSecretName }}
+                      key: client-key
+                {{ end }}
+                {{ if and .Values.vault .Values.vault.username }}
                 - name: CUSTOMER_VAULT_USERNAME
                   value: {{ .Values.vault.username | default "" | quote }}
+                {{ end }}
+                {{ if and .Values.vault .Values.vault.role }}
+                - name: CUSTOMER_VAULT_ROLE_NAME
+                  value: {{ .Values.vault.role }}
+                {{ end }}
+                {{ if and .Values.vault .Values.vault.address }}
+                - name: CUSTOMER_VAULT_ADDRESS
+                  value: {{ .Values.vault.address | quote }}
+                {{ end }}
+                {{ if .Values.customerVaultUrl }}
+                - name: CUSTOMER_VAULT_ADDRESS
+                  value: {{ .Values.customerVaultUrl | quote }}
+                {{ end }}
+                {{ if and .Values.vault .Values.vault.loginPath }}
                 - name: CUSTOMER_VAULT_LOGIN_PATH
                   value: {{ .Values.vault.loginPath | default "" | quote }}
                 {{ end }}
