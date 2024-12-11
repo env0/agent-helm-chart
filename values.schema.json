@@ -245,6 +245,10 @@
           "type": "string",
           "description": "For certificate login, specify the Kubernetes secret name (required). The keys must be client-cert and client-key.\n for example: `kubectl create secret generic <secret-name> -n env0-agent --from-file=client-key=vault.key  --from-file=client-cert=vault.crt --from-file=ca-cert=ca-cert.pem`"
         },
+        "passphraseSecretName": {
+          "type": "string",
+          "description": "passphrase (used by the certificate), specify the Kubernetes secret name (required). The key must be passphrase.\n for example: `kubectl create secret generic <secret-name> -n env0-agent --from-literal=passphrase=my-password`"
+        },
         "username": {
           "type": "string",
           "description": "vault username if you prefer to use username/password authentication"

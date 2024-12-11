@@ -243,6 +243,13 @@ spec:
                       name: {{ .Values.vault.caCertificateSecretName }}
                       key: ca-cert
                 {{ end }}
+                {{ if and .Values.vault .Values.vault.passphraseSecretName }}
+                - name: CUSTOMER_VAULT_PASSPHRASE
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.vault.passphraseSecretName }}
+                      key: passphrase
+                {{ end }}
                 {{ if and .Values.vault .Values.vault.clientCertificateSecretName }}
                 - name: CUSTOMER_VAULT_CERT
                   valueFrom:
