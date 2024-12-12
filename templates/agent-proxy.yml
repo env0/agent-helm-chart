@@ -92,6 +92,10 @@ spec:
               value: "{{ .Values.apiGatewayUrl }}"
             - name: MAX_CONCURRENT_REQUESTS
               value: "{{ .Values.agentProxy.maxConcurrentRequests }}"
+            {{ if .Values.gitSslNoVerify }}
+            - name: NODE_TLS_REJECT_UNAUTHORIZED
+              value: "0"
+            {{ end }}
             {{- include "env0-agent.customCertificatesNodeOptions" . | nindent 12 }}
             {{ if .Values.agentProxy.enableVcsWebhooksProxy }}
             - name: ENABLE_VCS_WEBHOOKS_PROXY
