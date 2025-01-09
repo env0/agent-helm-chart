@@ -336,6 +336,32 @@
       "description": "GitHub Enterprise credentials, base64 encoded",
       "type": "string"
     },
+    "customerOracleCredentials": {
+      "description": "Oracle credentials used for Oracle secret fetching, base64 encoded",
+      "properties": {
+        "tenancyOCIDEncoded": {
+          "description": "The OCI Tenancy OCID encoded in base64",
+          "type": "string"
+        },
+        "userOCIDEncoded": {
+          "description": "The OCID of the accessing user encoded in base64",
+          "type": "string"
+        },
+        "apiKeyFingerprintEncoded": {
+          "description": "The fingerprint of the API key associated with the user for authentication, base64 encoded",
+          "type": "string"
+        },
+        "apiKeyPrivateKeyEncoded": {
+          "description": "The private key content used for OCI API key authentication, base64 encoded",
+          "type": "string"
+        },
+        "secretsRegion": {
+          "description": "The OCI region where the secrets are stored",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "environmentOutputEncryptionKey": {
       "description": "Key for encrypting environment sensitive outputs",
       "type": "string"
