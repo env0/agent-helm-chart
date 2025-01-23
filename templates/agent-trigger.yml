@@ -27,6 +27,7 @@ spec:
       volumes:
         - name: tmp
           emptyDir: { }
+        {{- include "env0-agent.customCertificatesVolumes" . | nindent 8 }}
       {{- if or (hasKey .Values "agentImagePullSecret") (hasKey .Values "agentImagePullSecretRef") }}
       imagePullSecrets:
         - name: {{ if hasKey .Values "agentImagePullSecret" }}env0-image-pull-secret-{{ .Values.agentKey }}{{ else }}{{ .Values.agentImagePullSecretRef }}{{ end }}
@@ -39,8 +40,12 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
-          command: ["node"]
-          args: ["--enable-source-maps", "run-agent-trigger.js"]
+            {{- include "env0-agent.customCertificatesVolumesMounts" . | nindent 12 }}
+          command: [ "/bin/sh", "-c" ]
+          args:
+            # update-ca-certificates must be called before node starts
+            - update-ca-certificates;
+              node --enable-source-maps run-agent-trigger.js;
           livenessProbe:
             exec:
               command:
@@ -102,5 +107,6 @@ spec:
             - name: CONSOLE_LOGS_LEVEL
               value: {{ .Values.logger.level }}
             {{ end }}
+            {{- include "env0-agent.customCertificatesNodeOptions" . | nindent 12 }}
       {{- include "env0-agent.tolerations" .Values.tolerations | nindent 6 }}
       {{- include "env0-agent.affinity" .Values.affinity | nindent 6 }}
