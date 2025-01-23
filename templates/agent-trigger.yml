@@ -80,8 +80,6 @@ spec:
               value: "{{ .Release.Namespace }}"
             - name: CRON_JOB_NAME
               value: "{{ .Values.agentKey }}.deployment"
-            - name: CRON_JOB_API
-              value: {{ if .Capabilities.APIVersions.Has "batch/v1/CronJob" }}BatchV1Api{{ else }}BatchV1beta1Api{{ end }}
             - name: AGENT_TRIGGER_LIVENESS_PROBE_FILE
               value: *livenessProbeFile
             - name: FAILED_JOBS_HISTORY_LIMIT
