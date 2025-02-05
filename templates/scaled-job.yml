@@ -176,8 +176,6 @@ spec:
                   value: {{ .Values.gitlabEnterpriseBaseUrlSuffix | default "" | quote  }}
                 - name: GITHUB_ENTERPRISE_APP_ID
                   value: {{ .Values.githubEnterpriseAppId | default "" | quote }}
-                - name: GITHUB_ENTERPRISE_APP_CLIENT_ID
-                  value: {{ .Values.githubEnterpriseAppClientId | default "" | quote }}
                 - name: GITHUB_ENTERPRISE_APP_INSTALLATION_ID
                   value: {{ .Values.githubEnterpriseAppInstallationId | default "" | quote }}
                 - name: ALLOWED_VCS_URL_REGEX
