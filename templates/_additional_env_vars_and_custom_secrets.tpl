@@ -1,3 +1,16 @@
+{{- define "env0-agent.agent-additional-env-vars" -}}
+
+{{- $additional_env_vars := list -}}
+
+{{- range $key, $value := .Values.agentAdditionalEnvVars }}
+- name: {{ $key }}
+  value: {{ $value | quote }}
+{{- end -}}
+
+{{- /* define agent-additional-env-vars */ -}}
+{{- end  -}}
+
+
 {{- define "env0-agent.additional-env-vars-and-custom-secrets" -}}
 
 {{- $additional_env_vars := list -}}
@@ -35,4 +48,5 @@
       key: {{ $secret.key }}
 {{- end -}}
 
+{{- /* define additional-env-vars-and-custom-secrets */ -}}
 {{- end -}}

@@ -107,6 +107,7 @@ spec:
             - name: CONSOLE_LOGS_LEVEL
               value: {{ .Values.logger.level }}
             {{ end }}
+            {{- include "env0-agent.agent-additional-env-vars" . | nindent 12 }}
             {{- include "env0-agent.customCertificatesNodeOptions" . | nindent 12 }}
       {{- include "env0-agent.tolerations" .Values.tolerations | nindent 6 }}
       {{- include "env0-agent.affinity" .Values.affinity | nindent 6 }}

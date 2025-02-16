@@ -94,6 +94,7 @@ spec:
             - name: NODE_TLS_REJECT_UNAUTHORIZED
               value: "0"
             {{ end }}
+            {{- include "env0-agent.agent-additional-env-vars" . | nindent 12 }}
             {{- include "env0-agent.customCertificatesNodeOptions" . | nindent 12 }}
             {{ if .Values.agentProxy.enableVcsWebhooksProxy }}
             - name: ENABLE_VCS_WEBHOOKS_PROXY

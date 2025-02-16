@@ -1,3 +1,7 @@
 podAdditionalEnvVars:
   SOME_API_URL: https://api.example.com
   TENANT_ID: "12345"
+
+agentAdditionalEnvVars:
+  FOO: bar
+  moshe: here
