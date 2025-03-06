@@ -141,6 +141,35 @@
       },
       "type": "object"
     },
+    "agentTrigger": {
+      "description": "Agent trigger for triggering deployments",
+      "properties": {
+        "limits": {
+          "description": "Limits on the container",
+          "properties": {
+            "cpu": {
+              "type": "string"
+            },
+            "memory": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "requests": {
+          "description": "resource requests on the container",
+          "properties": {
+            "cpu": {
+              "type": "string"
+            },
+            "memory": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      }
+    },
     "agentProxy": {
       "description": "Agent proxy for proxying VCS requests from env0 to on-prem VCS servers",
       "properties": {
@@ -183,6 +212,10 @@
             }
           },
           "type": "object"
+        },
+        "maxOldSpaceSize": {
+          "type": "integer",
+          "description": "Node.js max old space size"
         }
       },
       "type": "object"

@@ -4,6 +4,13 @@ agentProxy:
   install: true
   replicas: 1
   maxConcurrentRequests: 500
+  maxOldSpaceSize: 600
+agentTrigger:
+  limits:
+    cpu: 500m
+    memory: 1000Mi
+  requests:
+    memory: 1000Mi
 #requests:
 #  cpu: 200m
 #  memory: 500Mi

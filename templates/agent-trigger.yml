@@ -56,10 +56,11 @@ spec:
             timeoutSeconds: 3
           resources:
             limits:
-              cpu: 500m
-              memory: 1000Mi
+              cpu: {{ .Values.agentTrigger.limits.cpu | default "500m" }}
+              memory: {{ .Values.agentTrigger.limits.memory | default "1000Mi" }}
             requests:
-              memory: 1000Mi
+              cpu: {{ .Values.agentTrigger.requests.cpu | default "500m" }}
+              memory: {{ .Values.agentTrigger.requests.memory | default "1000Mi" }}
           envFrom:
             - secretRef:
                 name: env0-secrets-{{ .Values.agentKey }}
