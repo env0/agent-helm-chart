@@ -282,6 +282,10 @@ spec:
                 - name: CUSTOMER_VAULT_LOGIN_PATH
                   value: {{ .Values.vault.loginPath | default "" | quote }}
                 {{ end }}
+                {{ if .Values.env0BlockDestroyAndTaskCommands }}
+                - name: ENV0_BLOCK_DESTROY_AND_TASK_COMMANDS
+                  value: {{ .Values.env0BlockDestroyAndTaskCommands | quote }}
+                {{ end }}
           terminationGracePeriodSeconds: 18000
           restartPolicy: Never
           {{- include "env0-agent.tolerations" (ternary .Values.tolerations .Values.deploymentTolerations (empty .Values.deploymentTolerations)) | nindent 10 -}}

@@ -674,6 +674,10 @@
       },
       "required": ["arn"],
       "type": "object"
+    },
+    "env0BlockDestroyAndTaskCommands": {
+      "description": "if true, this agent will reject deployments that try to run destroy commands or custom task commands",
+      "type": "boolean"
     }
   },
   "required": ["agentKey", "stage", "dockerImage", "stateMountPath", "limits", "agentProxy"],
