@@ -106,6 +106,8 @@ spec:
               {{- if (eq (include "env0-agent.shouldUsePVC" .) "true") }}
                 - name: env0-state-volume
                   mountPath: {{ $stateMountPath }}
+                - name: env0-state-volume
+                  mountPath: "/mnt/shared"
               {{- end }}
                 {{- include "env0-agent.customCertificatesVolumesMounts" . | nindent 16 }}
               {{ if .Values.strictSecurityContext }}

@@ -25,6 +25,8 @@ spec:
       volumeMounts:
         - name: env0-state-volume
           mountPath: {{ .root.Values.stateMountPath }}
+        - name: env0-state-volume
+          mountPath: "/mnt/shared"
       {{- end }}
       {{ if .env -}}
       env:
