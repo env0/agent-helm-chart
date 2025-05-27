@@ -21,6 +21,10 @@
         "type": "string"
       }
     },
+    "additionalPodConfig": {
+      "description": "Additional pod configuration to be set on deployment pods",
+      "type": "object"
+    },
     "agentAdditionalLabels": {
       "description": "Additional labels to be set on agent (trigger/proxy) pods",
       "type": "object",
@@ -167,6 +171,10 @@
             }
           },
           "type": "object"
+        },
+        "maxOldSpaceSize": {
+          "type": "integer",
+          "description": "Node.js max old space size"
         }
       }
     },

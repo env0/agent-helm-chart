@@ -58,6 +58,9 @@ spec:
           {{ if .Values.deploymentJobServiceAccountName }}
           serviceAccountName: {{ .Values.deploymentJobServiceAccountName }}
           {{ end }}
+          {{- if .Values.additionalPodConfig }}
+          {{- toYaml .Values.additionalPodConfig | nindent 10 }}
+          {{- end }}
           {{- if or (.Values.strictSecurityContext) (.Values.initContainer) }}
           initContainers:
             # when running with strict security context we mount emptyDir volume to /`home`
