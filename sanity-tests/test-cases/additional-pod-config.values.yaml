@@ -1,0 +1,12 @@
+additionalPodConfig:
+  hostAliases:
+    - ip: "192.168.1.100"
+      hostnames:
+        - "deployment-example.internal"
+        - "deployment-example.test"
+additionalAgentConfig:
+  hostAliases:
+    - ip: "192.168.1.100"
+      hostnames:
+        - "proxy-example.internal"
+        - "proxy-example.test"

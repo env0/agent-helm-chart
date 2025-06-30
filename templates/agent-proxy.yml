@@ -31,6 +31,9 @@ spec:
       imagePullSecrets:
         - name: {{ if hasKey .Values "agentImagePullSecret" }}env0-image-pull-secret-{{ .Values.agentKey }}{{ else }}{{ .Values.agentImagePullSecretRef }}{{ end }}
       {{- end }}
+      {{- if .Values.additionalAgentConfig }}
+      {{- toYaml .Values.additionalAgentConfig | nindent 6 }}
+      {{- end }}
       containers:
         - name: env0-agent-proxy
 {{ include "env0-agent.strict-security-context" . | indent 10 }}

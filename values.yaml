@@ -19,3 +19,177 @@ limits:
   memory: 1500Mi
 jobHistoryLimitSuccess: 10
 jobHistoryLimitFailure: 10
+
+iac-binaries-proxy: # This has to be snake-case because of restrictions in the eks dns (it is used in the url of the proxy)
+  enabled: false
+
+  resources:
+    requests:
+      "ephemeral-storage": 30Gi
+
+  service:
+    type: ClusterIP
+
+  extraVolumes:
+    - name: nginx-cache
+      emptyDir: { }
+    - name: nginx-run
+      emptyDir: { }
+
+  extraVolumeMounts:
+    - name: nginx-cache
+      mountPath: /var/cache/nginx
+    - name: nginx-run
+      mountPath: /var/run
+
+  serverBlock: |
+    proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=terraform_cache:10m max_size=29g inactive=365d use_temp_path=off;
+
+    log_format cache_log '$remote_addr - $remote_user [$time_local] '
+                         '"$request" $status $body_bytes_sent '
+                         '"$http_referer" "$http_user_agent" '
+                         'rt=$request_time ut=$upstream_response_time '
+                         'cs=$upstream_cache_status '
+                         'redir="$upstream_http_location"';
+
+    access_log /dev/stdout cache_log;
+
+    server {
+      listen 0.0.0.0:8443 ssl;
+      resolver 1.1.1.1 ipv6=off;
+
+      ssl_certificate     /certs/server.crt;
+      ssl_certificate_key /certs/server.key;
+
+      location ^~ /terraform/ {
+        proxy_pass https://releases.hashicorp.com/terraform/;
+        proxy_ssl_server_name on;
+
+        proxy_cache terraform_cache;
+        proxy_cache_valid 200 302 365d;  # Cache successful responses for 1 year
+
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+
+        add_header X-Cache-Status $upstream_cache_status;
+
+        proxy_ignore_headers Set-Cookie;
+      }
+      
+      # handle the requests to /terraform/ separately - these are the requests for the index, and we don't want to cache them so that if users ask for latest:^1.5 for example, it will actually give the latest version
+      location = /terraform/ {
+        proxy_pass https://releases.hashicorp.com/terraform/;
+        proxy_ssl_server_name on;
+      }
+
+      location /opentofu/opentofu/releases/download/ {
+        proxy_pass https://github.com$request_uri;
+        proxy_ssl_server_name on;
+        
+        proxy_set_header Accept "*/*";
+        proxy_set_header User-Agent "Mozilla/5.0 (compatible; OpenTofu Installer)";
+        
+        proxy_intercept_errors on;
+        error_page 301 302 = @fetch_opentofu;      # Follow redirects internally
+    
+        proxy_cache terraform_cache;
+        proxy_cache_key "$scheme$request_method$host$request_uri";
+        proxy_cache_valid 200 365d;
+        proxy_cache_valid 404 1m;
+        proxy_cache_valid 302 0s;
+        
+        proxy_ignore_headers Set-Cookie Cache-Control Expires Vary;
+        
+        add_header X-Cache-Status $upstream_cache_status;
+        
+        proxy_buffer_size          128k;
+        proxy_buffers              4 256k;
+        proxy_busy_buffers_size    256k;
+        proxy_temp_file_write_size 256k;
+        
+        proxy_read_timeout 90;
+      }
+    
+      # github redirects to the actual asset URL (e.g. GitHub S3), so we need to handle that internally.
+      location @fetch_opentofu {
+        internal;
+        set $saved_redirect $upstream_http_location;  # Capture Location header from GitHub
+        proxy_pass $saved_redirect;                 # Fetch the actual asset URL (e.g. GitHub S3)
+        proxy_ssl_server_name on;                    # SNI for the S3 host [oai_citation:7‡serverfault.com](https://serverfault.com/questions/583374/configure-nginx-as-reverse-proxy-with-upstream-ssl#:~:text=proxy_ssl_server_name%20on%3B)
+        proxy_set_header Host $proxy_host;           # Ensure Host matches the redirect target [oai_citation:8‡nginx.org](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#:~:text=,proxy_set_header%20Connection%20close%3B)
+        proxy_cache terraform_cache;
+        proxy_cache_key $scheme$proxy_host$uri;
+        proxy_cache_valid 200 365d;
+      }
+    
+      # handle the requests to the base url separately - these are the requests for the index, and we should pass them to the github api rather than the regular site.
+      # We don't want to cache them so that if users ask for latest for example, it will actually give the latest version
+      location /opentofu/opentofu/releases {
+        proxy_pass https://api.github.com/repos/opentofu/opentofu/releases;
+        proxy_ssl_server_name on;
+    
+        proxy_set_header Accept "*/*";
+        proxy_set_header User-Agent "Mozilla/5.0 (compatible; OpenTofu Installer)";
+    
+        proxy_buffer_size          128k;
+        proxy_buffers              4 256k;
+        proxy_busy_buffers_size    256k;
+        proxy_temp_file_write_size 256k;
+    
+        proxy_read_timeout 90;
+      }
+    
+
+      location /terragrunt/gruntwork-io/ {
+        proxy_pass https://github.com/gruntwork-io/;
+        proxy_ssl_server_name on;                    # Enable SNI for GitHub TLS [oai_citation:6‡serverfault.com](https://serverfault.com/questions/583374/configure-nginx-as-reverse-proxy-with-upstream-ssl#:~:text=proxy_ssl_server_name%20on%3B)
+        proxy_set_header Host github.com;
+
+        proxy_intercept_errors on;
+        error_page 301 302 = @fetch_terragrunt;      # Follow redirects internally
+
+        proxy_cache terraform_cache;
+        proxy_cache_key $scheme$proxy_host$uri;
+
+        proxy_cache_valid 200 365d;
+        proxy_cache_valid 404 1m;
+        proxy_cache_valid 302 0s;
+
+        proxy_buffer_size 128k;
+        proxy_buffers 4 256k;
+        proxy_busy_buffers_size 256k;
+        proxy_temp_file_write_size 256k;
+      }
+      
+      # github redirects to the actual asset URL (e.g. GitHub S3), so we need to handle that internally.
+      location @fetch_terragrunt {
+        internal;
+        set $saved_redirect $upstream_http_location;  # Capture Location header from GitHub
+        proxy_pass $saved_redirect;                 # Fetch the actual asset URL (e.g. GitHub S3)
+        proxy_ssl_server_name on;                    # SNI for the S3 host [oai_citation:7‡serverfault.com](https://serverfault.com/questions/583374/configure-nginx-as-reverse-proxy-with-upstream-ssl#:~:text=proxy_ssl_server_name%20on%3B)
+        proxy_set_header Host $proxy_host;           # Ensure Host matches the redirect target [oai_citation:8‡nginx.org](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#:~:text=,proxy_set_header%20Connection%20close%3B)
+        proxy_cache terraform_cache;
+        proxy_cache_key $scheme$proxy_host$uri;
+        proxy_cache_valid 200 365d;
+      }
+    
+      # handle the requests to /terragrunt/ separately - these are the requests for the index, and we should pass them to the github api rather than the regular site.
+      # We don't want to cache them so that if users ask for latest for example, it will actually give the latest version
+      location /terragrunt {
+        proxy_pass https://api.github.com/repos/gruntwork-io/terragrunt/releases;
+
+        proxy_buffer_size          128k;
+        proxy_buffers              4 256k;
+        proxy_busy_buffers_size    256k;
+        proxy_temp_file_write_size 256k;
+    
+        proxy_read_timeout 90;
+      }
+    }
+
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: prometheus
+

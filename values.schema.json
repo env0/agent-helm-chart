@@ -21,16 +21,20 @@
         "type": "string"
       }
     },
-    "additionalPodConfig": {
-      "description": "Additional pod configuration to be set on deployment pods",
-      "type": "object"
-    },
     "agentAdditionalLabels": {
       "description": "Additional labels to be set on agent (trigger/proxy) pods",
       "type": "object",
       "additionalProperties": {
         "type": "string"
       }
+    },
+    "additionalPodConfig": {
+      "description": "Additional pod configuration to be set on deployment pods",
+      "type": "object"
+    },
+    "additionalAgentConfig": {
+      "description": "Additional pod configuration to be set agent (trigger/proxy) pods",
+      "type": "object"
     },
     "podAdditionalAnnotations": {
       "description": "Additional annotations to be set on deployment pods",
