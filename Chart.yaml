@@ -28,10 +28,3 @@ appVersion: "1.0.0"
 #    import-values: # (optional)
 #      - ImportValues holds the mapping of source values to parent key to be imported. Each item can be a string or pair of child/parent sublist items.
 #    alias: (optional) Alias to be used for the chart. Useful when you have to add the same chart multiple times
-
-dependencies:
-  - name: nginx
-    version: "20.1.4"
-    repository: "https://charts.bitnami.com/bitnami"
-    alias: iac-binaries-proxy
-    condition: iac-binaries-proxy.enabled

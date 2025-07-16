@@ -3,8 +3,6 @@ deploy:
   steps:
     setupVariables:
       after:
-        - name: Helm build dependencies
-          run: helm repo add bitnami https://charts.bitnami.com/bitnami && helm dependency build ../
         - name: EKS update kubeconfig
           run: aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
         - name: Helm dry run

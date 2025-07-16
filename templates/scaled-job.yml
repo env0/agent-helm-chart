@@ -42,11 +42,6 @@ spec:
             - name: home
               emptyDir: { }
             {{- include "env0-agent.customCertificatesVolumes" . | nindent 12 }}
-            {{ if index (index .Values "iac-binaries-proxy") "enabled" }}
-            - name: iac-binaries-proxy-tls
-              secret:
-                secretName: {{ .Release.Name }}-iac-binaries-proxy-tls
-            {{ end }}
             {{- range $index, $secret := .Values.customSecretMounts }}
             - name: {{ $secret.volumeName }}
               secret:
@@ -123,11 +118,6 @@ spec:
                   mountPath: /tmp
                 - name: home
                   mountPath: /home
-              {{ end }}
-              {{- if index (index .Values "iac-binaries-proxy") "enabled" }}
-                - name: iac-binaries-proxy-tls
-                  mountPath: /usr/local/share/ca-certificates/tls.crt
-                  subPath: tls.crt
               {{ end }}
               {{- range $index, $secretVolumeMount := .Values.customSecretMounts }}
                 - name: {{ $secretVolumeMount.volumeName }}
@@ -300,12 +290,6 @@ spec:
                 {{ if .Values.env0BlockDestroyAndTaskCommands }}
                 - name: ENV0_BLOCK_DESTROY_AND_TASK_COMMANDS
                   value: {{ .Values.env0BlockDestroyAndTaskCommands | quote }}
-                {{ end }}
-                {{- if index (index .Values "iac-binaries-proxy") "enabled" }}
-                - name: TFENV_REMOTE
-                  value: "https://{{ .Release.Name }}-iac-binaries-proxy.{{ .Release.Namespace }}.svc.cluster.local"
-                - name: TOFUENV_REMOTE
-                  value: "https://{{ .Release.Name }}-iac-binaries-proxy.{{ .Release.Namespace }}.svc.cluster.local/opentofu/opentofu/releases"
                 {{ end }}
           terminationGracePeriodSeconds: 18000
           restartPolicy: Never
