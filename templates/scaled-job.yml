@@ -41,6 +41,8 @@ spec:
               emptyDir: { }
             - name: home
               emptyDir: { }
+            - name: packages-volume
+              emptyDir: { }
             {{- include "env0-agent.customCertificatesVolumes" . | nindent 12 }}
             {{- range $index, $secret := .Values.customSecretMounts }}
             - name: {{ $secret.volumeName }}
@@ -118,6 +120,8 @@ spec:
                   mountPath: /tmp
                 - name: home
                   mountPath: /home
+                - name: packages-volume
+                  mountPath: /opt/packages
               {{ end }}
               {{- range $index, $secretVolumeMount := .Values.customSecretMounts }}
                 - name: {{ $secretVolumeMount.volumeName }}
