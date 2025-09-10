@@ -151,8 +151,6 @@ spec:
               {{- end }}
               env:
 {{ include "env0-agent.http-proxy" . | indent 16 }}
-                - name: AGENT_VERSION
-                  value: {{ quote (regexReplaceAll ".*:" .Values.dockerImage "") }}
                 - name: IS_K8S
                   value: "true"
                 - name: STAGE
