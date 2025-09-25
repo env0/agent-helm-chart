@@ -11,6 +11,8 @@ agentTrigger:
     memory: 1000Mi
   requests:
     memory: 1000Mi
+  serviceAccount:
+    annotations: {}
 #requests:
 #  cpu: 200m
 #  memory: 500Mi

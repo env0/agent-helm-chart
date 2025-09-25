@@ -152,6 +152,18 @@
     "agentTrigger": {
       "description": "Agent trigger for triggering deployments",
       "properties": {
+        "serviceAccount": {
+          "description": "Agent trigger service account configuration",
+          "properties": {
+            "annotations": {
+              "description": "Service account annotations",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        },
         "limits": {
           "description": "Limits on the container",
           "properties": {
