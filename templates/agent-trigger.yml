@@ -95,6 +95,14 @@ spec:
               value: "{{ .Values.jobHistoryLimitSuccess }}"
             - name: DEPLOYMENT_POD_WARM_POOL_SIZE
               value: "{{ .Values.deploymentPodWarmPoolSize | default 0 }}"
+            {{- if .Values.agentThrottling }}
+            - name: AGENT_THROTTLING_ENABLED
+              value: "{{ .Values.agentThrottling.enabled }}"
+            - name: TASKS_POLLING_INTERVAL
+              value: "{{ .Values.agentThrottling.tasksPollingInterval }}"
+            - name: MAX_CONCURRENT_JOBS_PER_ORGANIZATION
+              value: "{{ .Values.agentThrottling.maxConcurrentJobsPerOrganization }}"
+            {{- end }}
             ### For calling the API GW
             - name: AGENT_API_GATEWAY_URL
               value: "{{ .Values.apiGatewayUrl }}"
