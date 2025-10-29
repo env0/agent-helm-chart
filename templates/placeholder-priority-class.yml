@@ -1,3 +1,4 @@
+{{ if (.Values.agentThrottling | default (dict "enabled" false)).enabled }}
 apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
@@ -5,3 +6,4 @@ metadata:
 value: -1000
 globalDefault: false
 description: "Negative priority for placeholder pods to enable overprovisioning."
+{{ end}}
