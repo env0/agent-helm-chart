@@ -106,7 +106,7 @@ spec:
               args:
                 # update-ca-certificates must be called before node starts
                 - update-ca-certificates;
-                  node --enable-source-maps main.js;
+                  node --enable-source-maps {{ ternary "start-agent.js" "main.js" (.Values.agentThrottling | default (dict "enabled" false)).enabled }};
               volumeMounts:
               {{- if (eq (include "env0-agent.shouldUsePVC" .) "true") }}
                 - name: env0-state-volume
@@ -192,6 +192,10 @@ spec:
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.name
+                - name: K8S_JOB_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.labels['job-name']
                 - name: K8S_NAMESPACE
                   value: "{{ .Release.Namespace }}"
                 - name: DEPLOYMENT_JOB_SERVICE_ACCOUNT_NAME

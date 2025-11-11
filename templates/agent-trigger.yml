@@ -95,9 +95,9 @@ spec:
               value: "{{ .Values.jobHistoryLimitSuccess }}"
             - name: DEPLOYMENT_POD_WARM_POOL_SIZE
               value: "{{ .Values.deploymentPodWarmPoolSize | default 0 }}"
-            {{- if .Values.agentThrottling }}
+            {{- if (.Values.agentThrottling | default (dict "enabled" false)).enabled  }}
             - name: AGENT_THROTTLING_ENABLED
-              value: "{{ .Values.agentThrottling.enabled }}"
+              value: "true"
             - name: TASKS_POLLING_INTERVAL
               value: "{{ .Values.agentThrottling.tasksPollingInterval }}"
             - name: MAX_CONCURRENT_JOBS_PER_ORGANIZATION

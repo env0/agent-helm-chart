@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: agent-trigger
+spec:
+  selector:
+    env0: agent-trigger
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3000

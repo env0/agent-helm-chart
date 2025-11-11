@@ -7,3 +7,6 @@ rules:
   - apiGroups: [""]
     resources: ["pods"]
     verbs: ["patch", "update"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["patch", "update"]

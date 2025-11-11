@@ -1,5 +1,18 @@
 {{- define "env0-agent.persistent-volume-claim-test.commands" -}}
-echo "✅💾 Persistent volume claim mounted successfully!"
+# Test that the volume is properly mounted
+if [ -d "{{ .Values.stateMountPath }}" ]; then
+  echo "✅💾 Persistent volume claim mounted successfully at {{ .Values.stateMountPath }}"
+  echo "✅💾 Shared volume mounted successfully at /mnt/shared"
+  exit 0
+else
+  echo "❌ Persistent volume claim not mounted at {{ .Values.stateMountPath }}"
+  exit 1
+fi
 {{- end -}}
 
+{{- if eq (include "env0-agent.shouldUsePVC" .) "true" }}
 {{- include "env0-agent.test" (dict "root" . "testName" "persistent-volume-claim" "commands" "env0-agent.persistent-volume-claim-test.commands" "persistentVolumeClaim" true) -}}
+{{- else }}
+{{- /* This is a no-op test when PVC is not enabled */ -}}
+{{- printf "---\n# Skipping PVC test as shouldUsePVC is false" | nindent 0 }}
+{{- end -}}

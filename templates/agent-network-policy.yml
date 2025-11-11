@@ -1,17 +1,52 @@
+# Policy 1: agent-trigger ingress - allow deployment pods on port 3000 only if throttling enabled
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: default-deny-ingress
+  name: agent-trigger-ingress
   namespace: {{ .Release.Namespace }}
 spec:
   podSelector:
-    matchExpressions:
-      - key: env0
-        operator: In
-        {{ if ((.Values.agentProxy).enableVcsWebhooksProxy) }} # don't block agent-proxy if the webhooks proxy is enabled
-        values: [ 'agent-trigger',  'agent-deployment' ]
-        {{ else }}
-        values: [ 'agent-trigger',  'agent-deployment', 'agent-proxy' ]
-        {{ end }}
+    matchLabels:
+      env0: agent-trigger
   policyTypes:
     - Ingress
+  {{ if (.Values.agentThrottling | default (dict "enabled" false)).enabled  }}
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              env0: agent-deployment
+      ports:
+        - protocol: TCP
+          port: 3000
+  {{ end }}
+---
+# Policy 2: agent-deployment ingress - deny all traffic
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: agent-deployment-ingress
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      env0: agent-deployment
+  policyTypes:
+    - Ingress
+---
+# Policy 3: agent-proxy ingress - allow all if webhooks enabled, otherwise deny all
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: agent-proxy-ingress
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      env0: agent-proxy
+  policyTypes:
+    - Ingress
+  {{ if ((.Values.agentProxy).enableVcsWebhooksProxy) }}
+  ingress:
+    - {}
+  {{ end }}

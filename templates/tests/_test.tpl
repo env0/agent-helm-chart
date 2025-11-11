@@ -5,6 +5,7 @@ metadata:
   name: &name "{{ .root.Release.Name }}-{{ .testName }}-test"
   annotations:
     "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": hook-succeeded
 spec:
   restartPolicy: Never
   {{ if or ( .root.Values.agentImagePullSecret ) ( .root.Values.agentImagePullSecretRef ) }}
