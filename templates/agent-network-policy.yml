@@ -10,7 +10,7 @@ spec:
       env0: agent-trigger
   policyTypes:
     - Ingress
-  {{ if (.Values.agentThrottling | default (dict "enabled" false)).enabled  }}
+  {{ if (.Values.agentThrottling | default (dict "enabled" true)).enabled  }}
   ingress:
     - from:
         - podSelector:
