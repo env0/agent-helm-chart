@@ -1,3 +1,7 @@
+## v4.0.45
+
+- chore: Remove tfenv, tgenv, tofuenv - from the image
+
 ## v4.0.44
 
 - chore: Install IAC tools without tfenv, tgenv, tofuenv - [read more](https://docs.envzero.com/guides/admin-guide/templates/iac-binaries-versions) 
