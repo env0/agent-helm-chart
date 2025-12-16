@@ -103,6 +103,12 @@ spec:
             - name: MAX_CONCURRENT_JOBS_PER_ORGANIZATION
               value: "{{ (.Values.agentThrottling | default dict).maxConcurrentJobsPerOrganization | default 0 }}"
             {{- end }}
+            {{- if .Values.driftDetection }}
+            {{- if .Values.driftDetection.jobOverrides }}
+            - name: DRIFT_DETECTION_JOB_OVERRIDES
+              value: {{ .Values.driftDetection.jobOverrides | quote }}
+            {{- end }}
+            {{- end }}
             ### For calling the API GW
             - name: AGENT_API_GATEWAY_URL
               value: "{{ .Values.apiGatewayUrl }}"
