@@ -106,7 +106,7 @@ spec:
               args:
                 # update-ca-certificates must be called before node starts
                 - update-ca-certificates;
-                  node --enable-source-maps {{ ternary "start-agent.js" "main.js" (.Values.agentThrottling | default (dict "enabled" true)).enabled }};
+                  node --enable-source-maps start-agent.js;
               volumeMounts:
               {{- if (eq (include "env0-agent.shouldUsePVC" .) "true") }}
                 - name: env0-state-volume

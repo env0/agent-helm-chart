@@ -1,3 +1,7 @@
+## v4.0.54
+
+- chore: Remove old scale deployments
+
 ## v4.0.45
 
 - chore: Remove tfenv, tgenv, tofuenv - from the image

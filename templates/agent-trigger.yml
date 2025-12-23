@@ -95,14 +95,10 @@ spec:
               value: "{{ .Values.jobHistoryLimitSuccess }}"
             - name: DEPLOYMENT_POD_WARM_POOL_SIZE
               value: "{{ .Values.deploymentPodWarmPoolSize | default 0 }}"
-            {{- if (.Values.agentThrottling | default (dict "enabled" true)).enabled  }}
-            - name: AGENT_THROTTLING_ENABLED
-              value: "true"
             - name: TASKS_POLLING_INTERVAL
               value: "{{ (.Values.agentThrottling | default dict).tasksPollingInterval | default 1000 }}"
             - name: MAX_CONCURRENT_JOBS_PER_ORGANIZATION
               value: "{{ (.Values.agentThrottling | default dict).maxConcurrentJobsPerOrganization | default 0 }}"
-            {{- end }}
             {{- if .Values.driftDetection }}
             {{- if .Values.driftDetection.jobOverrides }}
             - name: DRIFT_DETECTION_JOB_OVERRIDES

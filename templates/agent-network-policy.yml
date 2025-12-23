@@ -10,7 +10,6 @@ spec:
       env0: agent-trigger
   policyTypes:
     - Ingress
-  {{ if (.Values.agentThrottling | default (dict "enabled" true)).enabled  }}
   ingress:
     - from:
         - podSelector:
@@ -19,7 +18,6 @@ spec:
       ports:
         - protocol: TCP
           port: 3000
-  {{ end }}
 ---
 # Policy 2: agent-deployment ingress - deny all traffic
 apiVersion: networking.k8s.io/v1
