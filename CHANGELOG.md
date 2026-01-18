@@ -1,3 +1,7 @@
+## v4.0.67
+
+- chore: Replace VCS proxy queue type
+
 ## v4.0.54
 
 - chore: Remove old scale deployments
