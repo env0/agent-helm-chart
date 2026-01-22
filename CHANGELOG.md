@@ -1,3 +1,7 @@
+## v4.0.71
+
+- chore: Improve environment state management to work with backend management
+
 ## v4.0.67
 
 - chore: Replace VCS proxy queue type
