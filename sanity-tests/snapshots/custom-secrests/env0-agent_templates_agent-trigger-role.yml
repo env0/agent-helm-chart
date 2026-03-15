@@ -1,0 +1,17 @@
+---
+# Source: env0-agent/templates/agent-trigger-role.yml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: agent-trigger-role-shag-test
+  namespace: sanity-tests
+rules:
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["create", "list", "delete"]
+  - apiGroups: ["batch"]
+    resources: ["cronjobs"]
+    verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["list"]

@@ -1,5 +1,3 @@
-{{- $stateMountPath := ternary "/mnt/public/" .Values.stateMountPath (.Values.strictSecurityContext | default false) -}}
-
 # a cron job that never runs.
 # its job template is used to trigger jobs via k8s api
 apiVersion: batch/v1
@@ -110,7 +108,7 @@ spec:
               volumeMounts:
               {{- if (eq (include "env0-agent.shouldUsePVC" .) "true") }}
                 - name: env0-state-volume
-                  mountPath: {{ $stateMountPath }}
+                  mountPath: {{ include "env0-agent.stateMountPath" . }}
                 - name: env0-state-volume
                   mountPath: "/mnt/shared"
               {{- end }}
@@ -156,27 +154,21 @@ spec:
                 - name: STAGE
                   value: "{{ .Values.agentKey }}"
                 - name: ENV0_STAGE
-                  value: "{{ .Values.stage }}"
+                  value: "{{ include "env0-agent.stage" . }}"
                 - name: IS_SELF_HOSTED_K8S
-                  value: "{{ .Values.isSelfHosted }}"
+                  value: "{{ include "env0-agent.isSelfHosted" . }}"
                 - name: DEPLOYMENT_LOGS_LOG_LEVEL
                   value: "debug"
                 - name: ENV0_SERVICE_NAME
-                  value: "deployment-service-{{ .Values.stage }}-deployment-task" # used as caller id to authorize task to invoke other services
-                - name: KMS_KEY_ARN
-                  value: "{{ .Values.kmsKeyArn }}"
+                  value: "deployment-service-{{ include "env0-agent.stage" . }}-deployment-task" # used as caller id to authorize task to invoke other services
                 - name: HEARTBEAT_INTERVAL
                   value: "10000"
                 - name: SIGTERM_TIMEOUT
                   value: "60000"
-                - name: OUTPUT_LOGS_LOG_GROUP_NAME
-                  value: "{{ .Values.outputLogsLogGroupName }}"
                 - name: DEPLOYMENT_ECS_TASK_RUNTIME_TIMEOUT_SECONDS
                   value: "18000" # used as duration for assume role
                 - name: STATE_MOUNT_PATH
-                  value: "{{ $stateMountPath }}/{{ .Values.agentKey }}"
-                - name: AGENT_API_GATEWAY_URL
-                  value: "{{ .Values.apiGatewayUrl }}"
+                  value: "{{ include "env0-agent.stateMountPath" . }}"
                 - name: AWS_SECRETS_REGION
                   value: "{{ .Values.awsSecretsRegion }}"
                 - name: GITLAB_ENTERPRISE_BASE_URL_SUFFIX

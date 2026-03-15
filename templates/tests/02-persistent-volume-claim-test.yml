@@ -1,11 +1,11 @@
 {{- define "env0-agent.persistent-volume-claim-test.commands" -}}
 # Test that the volume is properly mounted
-if [ -d "{{ .Values.stateMountPath }}" ]; then
-  echo "✅💾 Persistent volume claim mounted successfully at {{ .Values.stateMountPath }}"
+if [ -d "{{ include "env0-agent.stateMountPath" . }}" ]; then
+  echo "✅💾 Persistent volume claim mounted successfully at {{ include "env0-agent.stateMountPath" . }}"
   echo "✅💾 Shared volume mounted successfully at /mnt/shared"
   exit 0
 else
-  echo "❌ Persistent volume claim not mounted at {{ .Values.stateMountPath }}"
+  echo "❌ Persistent volume claim not mounted at {{ include "env0-agent.stateMountPath" . }}"
   exit 1
 fi
 {{- end -}}

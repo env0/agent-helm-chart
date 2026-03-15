@@ -1,3 +1,7 @@
+{{- define "env0-agent.stateMountPath" -}}
+{{- ternary "/mnt/public/" "/mnt/private/env0" (.Values.strictSecurityContext | default false) -}}
+{{- end -}}
+
 {{- define "env0-agent.http-proxy" -}}
 {{ if .Values.httpProxy }}
 - name: HTTP_PROXY
@@ -35,6 +39,18 @@ securityContext:
 {{- end }}
 {{- end }}
 
+{{- define "env0-agent.isSelfHosted" -}}
+{{- if hasKey .Values "isSelfHosted" -}}
+  {{- .Values.isSelfHosted | toString -}}
+{{- else -}}
+  {{- "true" -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "env0-agent.stage" -}}
+{{- .Values.stage | default "prod" -}}
+{{- end -}}
+
 {{- define "env0-agent.shouldUsePVC" -}}
 {{- $secretValue := dict -}}
 
@@ -44,7 +60,7 @@ securityContext:
 
 {{- if (hasKey .Values "env0StateEncryptionKey") -}}
   false
-{{- else if (not (hasKey .Values "isSelfHosted")) -}}
+{{- else if eq (include "env0-agent.isSelfHosted" .) "false" -}}
   false
 {{- else if (not (hasKey .Values "env0ConfigSecretName")) -}}
 {{- /* no env0StateEncryptionKey or isSelfHosted in Values AND no env0ConfigSecretName provided */ -}}

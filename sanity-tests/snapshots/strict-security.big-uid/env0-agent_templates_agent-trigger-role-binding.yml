@@ -1,0 +1,15 @@
+---
+# Source: env0-agent/templates/agent-trigger-role-binding.yml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: agent-trigger-role-binding-shag-test
+  namespace: sanity-tests
+subjects:
+  - kind: ServiceAccount
+    name: agent-trigger-service-account
+    namespace: sanity-tests
+roleRef:
+  kind: Role
+  name: agent-trigger-role-shag-test
+  apiGroup: rbac.authorization.k8s.io

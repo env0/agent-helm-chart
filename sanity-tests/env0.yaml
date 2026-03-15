@@ -3,7 +3,7 @@ deploy:
   steps:
     setupVariables:
       after:
-        - name: EKS update kubeconfig
-          run: aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
-        - name: Helm dry run
-          run: ./helm_dry_run.sh
+        - name: Install dependencies
+          run: npm ci
+        - name: Helm sanity validate
+          run: npm run sanity validate

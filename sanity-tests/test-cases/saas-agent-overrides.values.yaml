@@ -1,0 +1,54 @@
+# see services/deployment-service/kubernetes/saas-agent.tf
+isSelfHosted: "false"
+stage: pr10000
+infracostApiKeyEncoded: aW5mcmFjb3N0
+assumerKeyIdEncoded: YXNzdW1lcktleUlkRW5jb2RlZA==
+assumerSecretEncoded: YXNzdW1lclNlY3JldEVuY29kZWQ=
+
+dockerImage: "123456789012.dkr.ecr.us-east-1.amazonaws.com/deployment-agent:pr10000"
+
+additionalAgentConfig:
+  nodeSelector:
+    karpenter.sh/nodepool: system
+additionalPodConfig:
+  nodeSelector:
+    karpenter.sh/nodepool: deployment
+
+deploymentPodWarmPoolSize: 21
+
+jobHistoryLimitSuccess: 0
+
+agentThrottling:
+  maxConcurrentDeployments: 10
+
+podAdditionalEnvVars:
+  ENV0_BINARY_CACHE_URL: "https://binary-mirror-prod.s3.us-east-1.amazonaws.com"
+
+agentProxy:
+  install: false
+
+requests:
+  cpu: "1000m"
+  memory: "4Gi"
+limits:
+  cpu: "3000m"
+  memory: "8Gi"
+
+agentTrigger:
+  limits:
+    memory: "4Gi"
+  maxOldSpaceSize: 4096
+
+driftDetection:
+  jobOverrides: '{"spec":{"template":{"spec":{"nodeSelector":{"karpenter.sh/nodepool":"drift-detection"},"containers":[{"resources":{"requests":{"cpu":"700m","memory":"1Gi"},"limits":{"cpu":"2000m","memory":"8Gi"}}}]}}}}'
+
+providerInstallation:
+  networkMirror:
+    url: "https://network-mirror.example.com"
+    include:
+      - "registry.terraform.io/hashicorp/*"
+  direct:
+    include:
+      - "*/*/*"
+    exclude:
+      - "registry.terraform.io/hashicorp/*"

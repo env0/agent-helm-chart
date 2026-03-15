@@ -5,15 +5,10 @@
       "description": "The ID of the agent",
       "type": "string"
     },
-    "awsAccessKeyIdEncoded": {
-      "description": "The AWS_ACCESS_KEY_ID provided by env0 used to perform agent specific actions in env0's AWS account",
+    "agentAccessToken": {
+      "description": "The agent access token for authenticating with env0",
       "type": "string"
     },
-    "awsSecretAccessKeyEncoded": {
-      "description": "The AWS_SECRET_ACCESS_KEY provided by env0 used to perform agent specific actions in env0's AWS account",
-      "type": "string"
-    },
-
     "podAdditionalLabels": {
       "description": "Additional labels to be set on deployment pods",
       "type": "object",
@@ -81,18 +76,6 @@
       "description": "PVC request storage size (default: 300Gi)",
       "type": "string"
     },
-    "env0ApiGwKeyEncoded": {
-      "description": "env0 API GW API key",
-      "type": "string"
-    },
-    "kmsKeyArn": {
-      "description": "KMS key in env0",
-      "type": "string"
-    },
-    "stage": {
-      "description": "env0 stage",
-      "type": "string"
-    },
     "dockerImage": {
       "description": "The deployment docker image",
       "type": "string"
@@ -105,24 +88,12 @@
       "description": "Infracost API KEY, base64 encoded",
       "type": "string"
     },
-    "outputLogsLogGroupName": {
-      "description": "Log group name in env0",
-      "type": "string"
-    },
     "assumerKeyIdEncoded": {
       "description": "AWS_ACCESS_KEY_ID used when assuming a role in env0",
       "type": "string"
     },
     "assumerSecretEncoded": {
       "description": "AWS_SECRET_ACCESS_KEY used when assuming a role in env0",
-      "type": "string"
-    },
-    "stateMountPath": {
-      "description": "State mount path - this will be overwritten when setting strictSecurityContext=true",
-      "type": "string"
-    },
-    "isSelfHosted": {
-      "description": "Is this a self hosted agent",
       "type": "string"
     },
     "limits": {
@@ -425,16 +396,6 @@
       "description": "Key for encrypting environment sensitive outputs",
       "type": "string"
     },
-    "alternativeLogLocation": {
-      "description": "Configuration for alternative log storage",
-      "properties": {
-        "dynamoWriterExternalIdEncoded": {
-          "description": "The ExternalID used to Assume the Dynamo Writer Role, base64 encoded",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
     "allowedVcsUrlRegex": {
       "description": "When set, cloning a git repository will only be permitted if the git url matches the regular expression set.",
       "type": "string",
@@ -692,19 +653,7 @@
       "type": "boolean"
     }
   },
-  "required": ["agentKey", "stage", "dockerImage", "stateMountPath", "limits", "agentProxy"],
-  "allOf": [
-    {
-      "if": {
-        "properties": {
-          "env0ConfigSecretName": { "type": "null" }
-        }
-      },
-      "then": {
-        "required": ["awsAccessKeyIdEncoded", "awsSecretAccessKeyEncoded", "env0ApiGwKeyEncoded"]
-      }
-    }
-  ],
+  "required": ["agentKey", "dockerImage", "limits", "agentProxy"],
   "title": "Values",
   "type": "object"
 }

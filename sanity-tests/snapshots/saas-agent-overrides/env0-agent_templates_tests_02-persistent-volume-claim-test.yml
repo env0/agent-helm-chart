@@ -1,0 +1,3 @@
+---
+# Source: env0-agent/templates/tests/02-persistent-volume-claim-test.yml
+# Skipping PVC test as shouldUsePVC is false

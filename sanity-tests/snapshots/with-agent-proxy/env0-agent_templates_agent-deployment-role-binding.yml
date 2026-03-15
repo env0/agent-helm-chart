@@ -1,0 +1,15 @@
+---
+# Source: env0-agent/templates/agent-deployment-role-binding.yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: agent-deployment-role-binding-shag-test
+  namespace: sanity-tests
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: sanity-tests
+roleRef:
+  kind: Role
+  name: agent-deployment-role-shag-test
+  apiGroup: rbac.authorization.k8s.io

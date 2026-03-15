@@ -25,7 +25,7 @@ spec:
       {{ if .persistentVolumeClaim -}}
       volumeMounts:
         - name: env0-state-volume
-          mountPath: {{ .root.Values.stateMountPath }}
+          mountPath: {{ include "env0-agent.stateMountPath" .root }}
         - name: env0-state-volume
           mountPath: "/mnt/shared"
       {{- end }}

@@ -1,0 +1,53 @@
+---
+# Source: env0-agent/templates/agent-network-policy.yml
+# Policy 1: agent-trigger ingress - allow deployment pods on port 3000 only if throttling enabled
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: agent-trigger-ingress
+  namespace: sanity-tests
+spec:
+  podSelector:
+    matchLabels:
+      env0: agent-trigger
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              env0: agent-deployment
+      ports:
+        - protocol: TCP
+          port: 3000
+---
+# Source: env0-agent/templates/agent-network-policy.yml
+# Policy 2: agent-deployment ingress - deny all traffic
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: agent-deployment-ingress
+  namespace: sanity-tests
+spec:
+  podSelector:
+    matchLabels:
+      env0: agent-deployment
+  policyTypes:
+    - Ingress
+---
+# Source: env0-agent/templates/agent-network-policy.yml
+# Policy 3: agent-proxy ingress - allow all if webhooks enabled, otherwise deny all
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: agent-proxy-ingress
+  namespace: sanity-tests
+spec:
+  podSelector:
+    matchLabels:
+      env0: agent-proxy
+  policyTypes:
+    - Ingress
+  
+  ingress:
+    - {}

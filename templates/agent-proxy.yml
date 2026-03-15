@@ -83,14 +83,9 @@ spec:
             - name: STAGE
               value: "{{ .Values.agentKey }}"
             - name: ENV0_STAGE
-              value: "{{ .Values.stage }}"
+              value: "{{ include "env0-agent.stage" . }}"
             - name: IS_SELF_HOSTED_K8S
-              value: "{{ .Values.isSelfHosted }}"
-            - name: OUTPUT_LOGS_LOG_GROUP_NAME
-              value: "{{ .Values.outputLogsLogGroupName }}"
-              ### For calling the API GW
-            - name: AGENT_API_GATEWAY_URL
-              value: "{{ .Values.apiGatewayUrl }}"
+              value: "{{ include "env0-agent.isSelfHosted" . }}"
             - name: MAX_CONCURRENT_REQUESTS
               value: "{{ .Values.agentProxy.maxConcurrentRequests }}"
             {{ if .Values.gitSslNoVerify }}

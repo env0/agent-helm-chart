@@ -1,0 +1,74 @@
+---
+# Source: env0-agent/templates/agent-proxy.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shag-test.agent-proxy-deployment
+  labels:
+    env0: agent-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      env0: agent-proxy
+  template:
+    metadata:
+      labels:
+        env0: agent-proxy
+      annotations:
+        forcePodRestart: "STABLE"
+    spec:
+      volumes:
+          
+      restartPolicy: Always
+      containers:
+        - name: env0-agent-proxy
+          
+          image: ghcr.io/env0/deployment-agent:dev
+          imagePullPolicy: Always
+          command: ["/bin/sh", "-c"]
+          args:
+            # update-ca-certificates must be called before node starts
+            - update-ca-certificates;
+              node --enable-source-maps --max-old-space-size="600" run-proxy.js;
+          resources:
+            limits:
+              
+              # backwards defaults
+              cpu: 250m
+              memory: 750Mi
+              
+            
+          volumeMounts:
+            
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: env0-secrets-shag-test
+          env:            
+            
+            
+            - name: GITLAB_ENTERPRISE_BASE_URL_SUFFIX
+              value: ""
+            - name: GITHUB_ENTERPRISE_APP_ID
+              value: ""
+            - name: GITHUB_ENTERPRISE_APP_INSTALLATION_ID
+              value: ""
+            - name: STAGE
+              value: "shag-test"
+            - name: ENV0_STAGE
+              value: "prod"
+            - name: IS_SELF_HOSTED_K8S
+              value: "true"
+            - name: MAX_CONCURRENT_REQUESTS
+              value: "500"
+            
+            
+            
+            
+            ### K8S Metadata
+            - name: K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name

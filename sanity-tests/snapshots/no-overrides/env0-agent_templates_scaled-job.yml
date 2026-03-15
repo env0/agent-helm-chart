@@ -1,0 +1,132 @@
+---
+# Source: env0-agent/templates/scaled-job.yml
+# a cron job that never runs.
+# its job template is used to trigger jobs via k8s api
+apiVersion: batch/v1
+kind: CronJob       # describes the [job template](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/)
+metadata:
+  name: shag-test.deployment
+spec:
+  suspend: true                 # ensures this cron job never runs
+  schedule: 0 0 1 1 1           # but a valid cron exprssion is still required
+  jobTemplate:
+    # describes the [job template](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/)
+    spec:
+      parallelism: 1 # [max number of desired pods](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/#controlling-parallelism)
+      completions: 1 # [desired number of successfully finished pods](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/#controlling-parallelism)
+      activeDeadlineSeconds: 36000 # 10hours - grace in case our step function failed to kill it # Specifies the duration in seconds relative to the startTime that the job may be active before the system tries to terminate it; value must be positive integer
+      backoffLimit: 0 # Specifies the number of retries before marking this job failed.
+      template:
+        metadata:
+          labels:
+            env0: agent-deployment
+          annotations:
+            cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+            karpenter.sh/do-not-evict: "true"
+            karpenter.sh/do-not-disrupt: "true"
+        spec:
+          volumes:
+            - name: env0-state-volume
+              persistentVolumeClaim:
+                claimName: env0-state-volume-claim
+            - name: tmp
+              emptyDir: { }
+            - name: home
+              emptyDir: { }
+            - name: packages-volume
+              emptyDir: { }
+            
+          
+          containers:
+            - name: deployment-container
+                            
+              image: ghcr.io/env0/deployment-agent:dev
+              imagePullPolicy: Always
+              command: [ "/bin/sh", "-c" ]
+              args:
+                # update-ca-certificates must be called before node starts
+                - update-ca-certificates;
+                  node --enable-source-maps start-agent.js;
+              volumeMounts:
+                - name: env0-state-volume
+                  mountPath: /mnt/private/env0
+                - name: env0-state-volume
+                  mountPath: "/mnt/shared"
+                
+              
+              resources:
+                limits:
+                
+                  cpu: "460m"
+                
+                  memory: "1500Mi"
+                
+              envFrom:
+                - secretRef:
+                    name: env0-secrets-shag-test
+              env:
+                
+                
+                
+                - name: IS_K8S
+                  value: "true"
+                - name: STAGE
+                  value: "shag-test"
+                - name: ENV0_STAGE
+                  value: "prod"
+                - name: IS_SELF_HOSTED_K8S
+                  value: "true"
+                - name: DEPLOYMENT_LOGS_LOG_LEVEL
+                  value: "debug"
+                - name: ENV0_SERVICE_NAME
+                  value: "deployment-service-prod-deployment-task" # used as caller id to authorize task to invoke other services
+                - name: HEARTBEAT_INTERVAL
+                  value: "10000"
+                - name: SIGTERM_TIMEOUT
+                  value: "60000"
+                - name: DEPLOYMENT_ECS_TASK_RUNTIME_TIMEOUT_SECONDS
+                  value: "18000" # used as duration for assume role
+                - name: STATE_MOUNT_PATH
+                  value: "/mnt/private/env0"
+                - name: AWS_SECRETS_REGION
+                  value: ""
+                - name: GITLAB_ENTERPRISE_BASE_URL_SUFFIX
+                  value: ""
+                - name: GITHUB_ENTERPRISE_APP_ID
+                  value: ""
+                - name: GITHUB_ENTERPRISE_APP_INSTALLATION_ID
+                  value: ""
+                - name: ALLOWED_VCS_URL_REGEX
+                  value: 
+                ### K8S Metadata
+                - name: K8S_POD_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+                - name: K8S_JOB_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.labels['job-name']
+                - name: K8S_NAMESPACE
+                  value: "sanity-tests"
+                - name: DEPLOYMENT_JOB_SERVICE_ACCOUNT_NAME
+                  value: 
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+          terminationGracePeriodSeconds: 18000
+          restartPolicy: Never

@@ -1,0 +1,40 @@
+---
+# Source: env0-agent/templates/tests/02-persistent-volume-claim-test.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: &name "agent-persistent-volume-claim-test"
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  restartPolicy: Never
+  
+  
+  volumes:
+    - name: env0-state-volume
+      persistentVolumeClaim:
+        claimName: env0-state-volume-claim
+  containers:
+    - name: *name
+      image: ghcr.io/env0/deployment-agent:dev
+      imagePullPolicy: Always
+      volumeMounts:
+        - name: env0-state-volume
+          mountPath: /mnt/private/env0
+        - name: env0-state-volume
+          mountPath: "/mnt/shared"
+      
+      command:
+        - /bin/bash
+        - -ec
+        - |
+          # Test that the volume is properly mounted
+          if [ -d "/mnt/private/env0" ]; then
+            echo "✅💾 Persistent volume claim mounted successfully at /mnt/private/env0"
+            echo "✅💾 Shared volume mounted successfully at /mnt/shared"
+            exit 0
+          else
+            echo "❌ Persistent volume claim not mounted at /mnt/private/env0"
+            exit 1
+          fi

@@ -1,5 +1,4 @@
 # Default values for env0-deployment.
-stateMountPath: "/mnt/private/env0"
 agentProxy:
   install: true
   replicas: 1

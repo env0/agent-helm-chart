@@ -1,0 +1,99 @@
+---
+# Source: env0-agent/templates/agent-trigger.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shag-test.agent-trigger-deployment
+  labels:
+    env0: agent-trigger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      env0: agent-trigger
+  template:
+    metadata:
+      labels:
+        env0: agent-trigger
+      annotations:
+        forcePodRestart: "STABLE"
+    spec:
+      serviceAccountName: agent-trigger-service-account
+      restartPolicy: Always
+      volumes:
+        - name: tmp
+          emptyDir: { }
+        
+      nodeSelector:
+        karpenter.sh/nodepool: system
+      containers:
+        - name: env0-agent-trigger
+            
+          image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/deployment-agent:pr10000
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            
+          command: [ "/bin/sh", "-c" ]
+          args:
+            # update-ca-certificates must be called before node starts
+            - update-ca-certificates;
+              node --enable-source-maps run-agent-trigger.js;
+          livenessProbe:
+            exec:
+              command:
+                - rm
+                - &livenessProbeFile /tmp/healthy
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: 500m
+              memory: 4Gi
+            requests:
+              cpu: 500m
+              memory: 1000Mi
+          envFrom:
+            - secretRef:
+                name: env0-secrets-shag-test
+          env:
+            
+            
+            
+            - name: K8S_VERSION
+              value: v1.31.0
+            - name: STAGE
+              value: "shag-test"
+            - name: ENV0_STAGE
+              value: "pr10000"
+            - name: IS_SELF_HOSTED_K8S
+              value: "false"
+            - name: K8S_NAMESPACE
+              value: "sanity-tests"
+            - name: CRON_JOB_NAME
+              value: "shag-test.deployment"
+            - name: AGENT_TRIGGER_LIVENESS_PROBE_FILE
+              value: *livenessProbeFile
+            - name: FAILED_JOBS_HISTORY_LIMIT
+              value: "10"
+            - name: SUCCESSFUL_JOBS_HISTORY_LIMIT
+              value: "0"
+            - name: DEPLOYMENT_POD_WARM_POOL_SIZE
+              value: "21"
+            - name: TASKS_POLLING_INTERVAL
+              value: "1000"
+            - name: MAX_CONCURRENT_JOBS_PER_ORGANIZATION
+              value: "0"
+            - name: DRIFT_DETECTION_JOB_OVERRIDES
+              value: "{\"spec\":{\"template\":{\"spec\":{\"nodeSelector\":{\"karpenter.sh/nodepool\":\"drift-detection\"},\"containers\":[{\"resources\":{\"requests\":{\"cpu\":\"700m\",\"memory\":\"1Gi\"},\"limits\":{\"cpu\":\"2000m\",\"memory\":\"8Gi\"}}}]}}}}"
+            ### K8S Metadata
+            - name: K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            
+            
+            - name: NODE_OPTIONS
+              value: "--max-old-space-size=4096"
