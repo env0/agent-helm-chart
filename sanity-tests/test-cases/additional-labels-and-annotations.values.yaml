@@ -1,3 +1,4 @@
+agentAccessToken: "env0agent_secret-id_secret-value"
 podAdditionalLabels:
   deployment-label1: value1
   deployment-label2: value2

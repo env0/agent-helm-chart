@@ -1,3 +1,4 @@
+agentAccessToken: "env0agent_secret-id_secret-value"
 agentProxy:
   install: true
   enableVcsWebhooksProxy: true

@@ -3,7 +3,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: agent-deployment-role-binding-shag-test
+  name: agent-deployment-role-binding-agent
   namespace: sanity-tests
 subjects:
   - kind: ServiceAccount
@@ -11,5 +11,5 @@ subjects:
     namespace: sanity-tests
 roleRef:
   kind: Role
-  name: agent-deployment-role-shag-test
+  name: agent-deployment-role-agent
   apiGroup: rbac.authorization.k8s.io

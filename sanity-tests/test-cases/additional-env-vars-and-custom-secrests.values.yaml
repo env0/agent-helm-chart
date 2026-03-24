@@ -1,3 +1,4 @@
+agentAccessToken: "env0agent_secret-id_secret-value"
 podAdditionalEnvVars:
   SOME_API_URL: https://api.example.com
   TENANT_ID: "12345"

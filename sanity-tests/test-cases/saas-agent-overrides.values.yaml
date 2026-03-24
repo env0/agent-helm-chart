@@ -1,4 +1,5 @@
 # see services/deployment-service/kubernetes/saas-agent.tf
+agentAccessToken: "env0agent_test-agent-key_test-api-gw-key"
 isSelfHosted: "false"
 stage: pr10000
 infracostApiKeyEncoded: aW5mcmFjb3N0

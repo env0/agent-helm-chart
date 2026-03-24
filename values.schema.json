@@ -1,10 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema#",
   "properties": {
-    "agentKey": {
-      "description": "The ID of the agent",
-      "type": "string"
-    },
     "agentAccessToken": {
       "description": "The agent access token for authenticating with env0",
       "type": "string"
@@ -653,7 +649,15 @@
       "type": "boolean"
     }
   },
-  "required": ["agentKey", "dockerImage", "limits", "agentProxy"],
+  "required": ["dockerImage", "limits", "agentProxy"],
+  "if": {
+    "not": {
+      "required": ["env0ConfigSecretName"]
+    }
+  },
+  "then": {
+    "required": ["agentAccessToken"]
+  },
   "title": "Values",
   "type": "object"
 }

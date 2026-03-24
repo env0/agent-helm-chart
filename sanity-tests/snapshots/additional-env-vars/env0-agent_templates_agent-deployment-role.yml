@@ -3,7 +3,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: agent-deployment-role-shag-test
+  name: agent-deployment-role-agent
   namespace: sanity-tests
 rules:
   - apiGroups: [""]

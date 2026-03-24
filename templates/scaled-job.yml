@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: CronJob       # describes the [job template](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/)
 metadata:
-  name: {{ .Values.agentKey }}.deployment
+  name: {{ .Release.Name }}.deployment
 spec:
   suspend: true                 # ensures this cron job never runs
   schedule: 0 0 1 1 1           # but a valid cron exprssion is still required
@@ -53,7 +53,7 @@ spec:
             {{- end }}
           {{- if or (hasKey .Values "agentImagePullSecret") (hasKey .Values "agentImagePullSecretRef") }}
           imagePullSecrets:
-            - name: {{ if hasKey .Values "agentImagePullSecret" }}env0-image-pull-secret-{{ .Values.agentKey }}{{ else }}{{ .Values.agentImagePullSecretRef }}{{ end }}
+            - name: {{ if hasKey .Values "agentImagePullSecret" }}env0-image-pull-secret-{{ .Release.Name }}{{ else }}{{ .Values.agentImagePullSecretRef }}{{ end }}
           {{- end }}
           {{ if .Values.deploymentJobServiceAccountName }}
           serviceAccountName: {{ .Values.deploymentJobServiceAccountName }}
@@ -142,7 +142,7 @@ spec:
                 {{ end }}
               envFrom:
                 - secretRef:
-                    name: env0-secrets-{{ .Values.agentKey }}
+                    name: env0-secrets-{{ .Release.Name }}
               {{- if .Values.env0ConfigSecretName }}
                 - secretRef:
                     name: {{ .Values.env0ConfigSecretName }}
@@ -151,8 +151,6 @@ spec:
 {{ include "env0-agent.http-proxy" . | indent 16 }}
                 - name: IS_K8S
                   value: "true"
-                - name: STAGE
-                  value: "{{ .Values.agentKey }}"
                 - name: ENV0_STAGE
                   value: "{{ include "env0-agent.stage" . }}"
                 - name: IS_SELF_HOSTED_K8S

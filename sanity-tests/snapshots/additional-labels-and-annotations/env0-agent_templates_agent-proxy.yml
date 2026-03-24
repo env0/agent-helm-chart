@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: shag-test.agent-proxy-deployment
+  name: agent.agent-proxy-deployment
   labels:
     env0: agent-proxy
 spec:
@@ -49,7 +49,7 @@ spec:
             - containerPort: 8000
           envFrom:
             - secretRef:
-                name: env0-secrets-shag-test
+                name: env0-secrets-agent
           env:            
             
             
@@ -59,8 +59,6 @@ spec:
               value: ""
             - name: GITHUB_ENTERPRISE_APP_INSTALLATION_ID
               value: ""
-            - name: STAGE
-              value: "shag-test"
             - name: ENV0_STAGE
               value: "prod"
             - name: IS_SELF_HOSTED_K8S

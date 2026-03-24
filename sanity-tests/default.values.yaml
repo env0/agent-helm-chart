@@ -1,5 +1,3 @@
-"agentKey": "shag-test"
-"agentAccessToken": "env0agent_secret-id_secret-value"
 # we embed dockerImage into chart's default values.yaml when we publish the chart
 # set it here for tests
 dockerImage: ghcr.io/env0/deployment-agent:dev

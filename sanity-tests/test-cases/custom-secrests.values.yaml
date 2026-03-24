@@ -1,3 +1,4 @@
+agentAccessToken: "env0agent_secret-id_secret-value"
 customSecrets:
   - envVarName: SOME_API_KEY
     secretName: some-api-key

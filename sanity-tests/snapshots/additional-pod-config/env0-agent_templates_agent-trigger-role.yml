@@ -3,7 +3,7 @@
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: agent-trigger-role-shag-test
+  name: agent-trigger-role-agent
   namespace: sanity-tests
 rules:
   - apiGroups: ["batch"]

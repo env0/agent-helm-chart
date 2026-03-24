@@ -5,7 +5,7 @@
 apiVersion: batch/v1
 kind: CronJob       # describes the [job template](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/)
 metadata:
-  name: shag-test.deployment
+  name: agent.deployment
 spec:
   suspend: true                 # ensures this cron job never runs
   schedule: 0 0 1 1 1           # but a valid cron exprssion is still required
@@ -67,15 +67,13 @@ spec:
                 
               envFrom:
                 - secretRef:
-                    name: env0-secrets-shag-test
+                    name: env0-secrets-agent
               env:
                 
                 
                 
                 - name: IS_K8S
                   value: "true"
-                - name: STAGE
-                  value: "shag-test"
                 - name: ENV0_STAGE
                   value: "prod"
                 - name: IS_SELF_HOSTED_K8S

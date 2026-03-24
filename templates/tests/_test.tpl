@@ -10,7 +10,7 @@ spec:
   restartPolicy: Never
   {{ if or ( .root.Values.agentImagePullSecret ) ( .root.Values.agentImagePullSecretRef ) }}
   imagePullSecrets:
-    - name: {{ if .root.Values.agentImagePullSecret }}env0-image-pull-secret-{{ .root.Values.agentKey }}{{ else }}{{ .root.Values.agentImagePullSecretRef }}{{ end }}
+    - name: {{ if .root.Values.agentImagePullSecret }}env0-image-pull-secret-{{ .root.Release.Name }}{{ else }}{{ .root.Values.agentImagePullSecretRef }}{{ end }}
   {{ end }}
   {{ if .persistentVolumeClaim }}
   volumes:

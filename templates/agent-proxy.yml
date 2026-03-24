@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.agentKey }}.agent-proxy-deployment
+  name: {{ .Release.Name }}.agent-proxy-deployment
   labels:
     env0: agent-proxy
 spec:
@@ -29,7 +29,7 @@ spec:
       restartPolicy: Always
       {{- if or (hasKey .Values "agentImagePullSecret") (hasKey .Values "agentImagePullSecretRef") }}
       imagePullSecrets:
-        - name: {{ if hasKey .Values "agentImagePullSecret" }}env0-image-pull-secret-{{ .Values.agentKey }}{{ else }}{{ .Values.agentImagePullSecretRef }}{{ end }}
+        - name: {{ if hasKey .Values "agentImagePullSecret" }}env0-image-pull-secret-{{ .Release.Name }}{{ else }}{{ .Values.agentImagePullSecretRef }}{{ end }}
       {{- end }}
       {{- if .Values.additionalAgentConfig }}
       {{- toYaml .Values.additionalAgentConfig | nindent 6 }}
@@ -67,7 +67,7 @@ spec:
             - containerPort: 8000
           envFrom:
             - secretRef:
-                name: env0-secrets-{{ .Values.agentKey }}
+                name: env0-secrets-{{ .Release.Name }}
             {{- if .Values.env0ConfigSecretName }}
             - secretRef:
                 name: {{ .Values.env0ConfigSecretName }}
@@ -80,8 +80,6 @@ spec:
               value: {{ .Values.githubEnterpriseAppId | default "" | quote }}
             - name: GITHUB_ENTERPRISE_APP_INSTALLATION_ID
               value: {{ .Values.githubEnterpriseAppInstallationId | default "" | quote }}
-            - name: STAGE
-              value: "{{ .Values.agentKey }}"
             - name: ENV0_STAGE
               value: "{{ include "env0-agent.stage" . }}"
             - name: IS_SELF_HOSTED_K8S

@@ -1,3 +1,4 @@
+agentAccessToken: "env0agent_secret-id_secret-value"
 additionalPodConfig:
   hostAliases:
     - ip: "192.168.1.100"
