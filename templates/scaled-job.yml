@@ -190,6 +190,11 @@ spec:
                   value: "{{ .Release.Namespace }}"
                 - name: DEPLOYMENT_JOB_SERVICE_ACCOUNT_NAME
                   value: {{ .Values.deploymentJobServiceAccountName | default "" }}
+                {{- /* backward compat for pre-v5 agents */ -}}
+                {{- if .Values.agentKey }}
+                - name: AGENT_KEY
+                  value: "{{ .Values.agentKey }}"
+                {{- end }}
                 {{ if .Values.providerInstallation }}
                 - name: PROVIDER_INSTALLATION
                   value: {{ .Values.providerInstallation | toJson | quote }}

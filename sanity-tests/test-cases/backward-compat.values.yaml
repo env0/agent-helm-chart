@@ -1,14 +1,3 @@
-agentKey: "shag-test"
-apiGatewayUrl: "https://shag-test.agent.env0.com/shag-test"
-awsAccessKeyIdEncoded: "SHOULD-NOT-BE-RENDERED"
-awsSecretAccessKeyEncoded: "SHOULD-NOT-BE-RENDERED"
-env0ApiGwKeyEncoded: "dGVzdF9hcGlfZ3dfa2V5"
-isSelfHosted: "true"
-outputLogsLogGroupName: "prerequisites-prod-k8s-shag-logs"
-stage: "prod"
-alternativeLogLocation:
-  dynamoWriterExternalIdEncoded: "SHOULD-NOT-BE-RENDERED"
-
-
-# reset value from default.values.yaml
-agentAccessToken: ""
+# agentAccessToken is not required when agentKey and env0ApiGwKeyEncoded are provided
+agentKey: "my-agent-key"
+env0ApiGwKeyEncoded: "bXktYXBpLWtleQ=="

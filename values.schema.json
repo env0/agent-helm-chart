@@ -607,6 +607,14 @@
         }
       }
     },
+    "agentKey": {
+      "description": "Deprecated - backward compat for pre-v5 agents. The agent's key identifier",
+      "type": "string"
+    },
+    "env0ApiGwKeyEncoded": {
+      "description": "Deprecated - backward compat for pre-v5 agents. The API gateway key, base64 encoded",
+      "type": "string"
+    },
     "env0ConfigSecretName": {
       "description": "K8s Secret Name that contains secrets and credentials used to configure env0",
       "type": "string"
@@ -652,7 +660,10 @@
   "required": ["dockerImage", "limits", "agentProxy"],
   "if": {
     "not": {
-      "required": ["env0ConfigSecretName"]
+      "anyOf": [
+        { "required": ["env0ConfigSecretName"] },
+        { "required": ["agentKey", "env0ApiGwKeyEncoded"] }
+      ]
     }
   },
   "then": {

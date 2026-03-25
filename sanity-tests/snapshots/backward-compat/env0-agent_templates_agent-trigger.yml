@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: shag-test.agent-trigger-deployment
+  name: agent.agent-trigger-deployment
   labels:
     env0: agent-trigger
 spec:
@@ -55,15 +55,13 @@ spec:
               memory: 1000Mi
           envFrom:
             - secretRef:
-                name: env0-secrets-shag-test
+                name: env0-secrets-agent
           env:
             
             
             
             - name: K8S_VERSION
               value: v1.31.0
-            - name: STAGE
-              value: "shag-test"
             - name: ENV0_STAGE
               value: "prod"
             - name: IS_SELF_HOSTED_K8S
@@ -71,7 +69,7 @@ spec:
             - name: K8S_NAMESPACE
               value: "sanity-tests"
             - name: CRON_JOB_NAME
-              value: "shag-test.deployment"
+              value: "agent.deployment"
             - name: AGENT_TRIGGER_LIVENESS_PROBE_FILE
               value: *livenessProbeFile
             - name: FAILED_JOBS_HISTORY_LIMIT
@@ -84,6 +82,8 @@ spec:
               value: "1000"
             - name: MAX_CONCURRENT_JOBS_PER_ORGANIZATION
               value: "0"
+            - name: AGENT_KEY
+              value: "my-agent-key"
             ### K8S Metadata
             - name: K8S_POD_NAME
               valueFrom:
