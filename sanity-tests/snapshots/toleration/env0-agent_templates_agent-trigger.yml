@@ -89,6 +89,10 @@ spec:
                   fieldPath: metadata.name
             
             
+            - name: IMAGE_TAG
+              value: "ghcr.io/env0/deployment-agent:dev"
+            - name: RELEASE_VERSION
+              value: "1.0.0"
             
             
       tolerations: 

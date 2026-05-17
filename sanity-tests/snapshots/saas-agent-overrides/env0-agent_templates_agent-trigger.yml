@@ -95,3 +95,8 @@ spec:
             
             - name: NODE_OPTIONS
               value: "--max-old-space-size=4096"
+            
+            - name: IMAGE_TAG
+              value: "123456789012.dkr.ecr.us-east-1.amazonaws.com/deployment-agent:pr10000"
+            - name: RELEASE_VERSION
+              value: "1.0.0"

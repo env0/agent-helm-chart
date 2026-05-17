@@ -121,6 +121,7 @@ spec:
             - name: NODE_OPTIONS
               value: "--max-old-space-size={{ .Values.agentTrigger.maxOldSpaceSize }}"
             {{ end }}
+            {{- include "env0-agent.version-env-vars" . | nindent 12 }}
             {{- include "env0-agent.agent-additional-env-vars" . | nindent 12 }}
             {{- include "env0-agent.customCertificatesNodeOptions" . | nindent 12 }}
       {{- include "env0-agent.tolerations" .Values.tolerations | nindent 6 }}

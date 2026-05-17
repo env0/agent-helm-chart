@@ -51,6 +51,13 @@ securityContext:
 {{- .Values.stage | default "prod" -}}
 {{- end -}}
 
+{{- define "env0-agent.version-env-vars" -}}
+- name: IMAGE_TAG
+  value: {{ .Values.dockerImage | quote }}
+- name: RELEASE_VERSION
+  value: {{ trimPrefix "v" .Chart.AppVersion | quote }}
+{{- end -}}
+
 {{- define "env0-agent.shouldUsePVC" -}}
 {{- $secretValue := dict -}}
 

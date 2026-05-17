@@ -114,6 +114,10 @@ spec:
                 
                 
                 
+                - name: IMAGE_TAG
+                  value: "ghcr.io/env0/deployment-agent:dev"
+                - name: RELEASE_VERSION
+                  value: "1.0.0"
                 
                 - name: ADDITIONAL_ENV_VARS
                   value: '["SOME_API_URL","TENANT_ID","SOME_API_KEY","SOME_API_SECRET"]'

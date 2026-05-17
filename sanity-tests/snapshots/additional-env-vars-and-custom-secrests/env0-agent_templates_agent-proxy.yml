@@ -62,6 +62,10 @@ spec:
             - name: MAX_CONCURRENT_REQUESTS
               value: "500"
             
+            - name: IMAGE_TAG
+              value: "ghcr.io/env0/deployment-agent:dev"
+            - name: RELEASE_VERSION
+              value: "1.0.0"
             
             
             

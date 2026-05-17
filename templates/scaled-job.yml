@@ -233,6 +233,7 @@ spec:
                 - name: CONSOLE_LOGS_LEVEL
                   value: {{ .Values.logger.level }}
                 {{ end }}
+                {{- include "env0-agent.version-env-vars" . | nindent 16 }}
                 {{- include "env0-agent.additional-env-vars-and-custom-secrets" . | nindent 16}}
                 {{ if and .Values.vault .Values.vault.method }}
                 - name: CUSTOMER_VAULT_LOGIN_METHOD
