@@ -637,6 +637,10 @@
       "type": "boolean",
       "description": "Use Env0 OIDC for AWS SSM secret fetching"
     },
+    "useV2OidcForAwsSsm": {
+      "type": "boolean",
+      "description": "Request the v2 'sts.amazonaws.com' OIDC audience when fetching AWS SSM secrets. The SSM role's trust policy must accept 'sts.amazonaws.com'. Only used when useOidcForAwsSsm=true"
+    },
     "customRoleForOidcAwsSsm": {
       "description": "Custom role for AWS SSM secret fetching, Note: only used when useOidcForAwsSsm=true",
       "properties": {

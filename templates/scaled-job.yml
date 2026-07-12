@@ -202,6 +202,10 @@ spec:
                 {{ if .Values.useOidcForAwsSsm }}
                 - name: USE_OIDC_FOR_AWS_SSM
                   value: {{ .Values.useOidcForAwsSsm | quote }}
+                {{ if .Values.useV2OidcForAwsSsm }}
+                - name: USE_V2_OIDC_FOR_AWS_SSM
+                  value: {{ .Values.useV2OidcForAwsSsm | quote }}
+                {{ end }}
                 {{ if .Values.customRoleForOidcAwsSsm }}
                 - name: CUSTOM_ROLE_FOR_OIDC_AWS_SSM
                   value: {{ .Values.customRoleForOidcAwsSsm.arn | quote }}
