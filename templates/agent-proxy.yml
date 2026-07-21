@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}.agent-proxy-deployment
+  name: {{ include "env0-agent.releaseName" . }}-agent-proxy-deployment
   labels:
     env0: agent-proxy
 spec:

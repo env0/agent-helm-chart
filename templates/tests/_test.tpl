@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: &name "{{ .root.Release.Name }}-{{ .testName }}-test"
+  name: &name "{{ include "env0-agent.releaseName" .root }}-{{ .testName }}-test"
   annotations:
     "helm.sh/hook": test
     "helm.sh/hook-delete-policy": hook-succeeded

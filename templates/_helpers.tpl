@@ -51,6 +51,10 @@ securityContext:
 {{- .Values.stage | default "prod" -}}
 {{- end -}}
 
+{{- define "env0-agent.releaseName" -}}
+{{- .Release.Name | replace "." "-" -}}
+{{- end -}}
+
 {{- define "env0-agent.version-env-vars" -}}
 - name: IMAGE_TAG
   value: {{ .Values.dockerImage | quote }}

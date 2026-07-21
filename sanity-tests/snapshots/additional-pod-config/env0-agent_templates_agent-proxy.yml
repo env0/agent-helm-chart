@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: agent.agent-proxy-deployment
+  name: agent-agent-proxy-deployment
   labels:
     env0: agent-proxy
 spec:

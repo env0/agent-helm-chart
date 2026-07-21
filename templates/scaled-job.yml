@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: CronJob       # describes the [job template](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/)
 metadata:
-  name: {{ .Release.Name }}.deployment
+  name: {{ include "env0-agent.releaseName" . }}-deployment
 spec:
   suspend: true                 # ensures this cron job never runs
   schedule: 0 0 1 1 1           # but a valid cron exprssion is still required

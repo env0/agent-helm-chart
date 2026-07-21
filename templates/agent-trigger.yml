@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}.agent-trigger-deployment
+  name: {{ include "env0-agent.releaseName" . }}-agent-trigger-deployment
   labels:
     env0: agent-trigger
 spec:
@@ -82,7 +82,7 @@ spec:
             - name: K8S_NAMESPACE
               value: "{{ .Release.Namespace }}"
             - name: CRON_JOB_NAME
-              value: "{{ .Release.Name }}.deployment"
+              value: "{{ include "env0-agent.releaseName" . }}-deployment"
             - name: AGENT_TRIGGER_LIVENESS_PROBE_FILE
               value: *livenessProbeFile
             - name: FAILED_JOBS_HISTORY_LIMIT
