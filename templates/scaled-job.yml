@@ -149,12 +149,9 @@ spec:
               {{- end }}
               env:
 {{ include "env0-agent.http-proxy" . | indent 16 }}
-                - name: IS_K8S
-                  value: "true"
                 - name: ENV0_STAGE
                   value: "{{ include "env0-agent.stage" . }}"
-                - name: IS_SELF_HOSTED_K8S
-                  value: "{{ include "env0-agent.isSelfHosted" . }}"
+                {{- include "env0-agent.isSelfHostedEnvVar" . | nindent 16 }}
                 - name: DEPLOYMENT_LOGS_LOG_LEVEL
                   value: "debug"
                 - name: ENV0_SERVICE_NAME

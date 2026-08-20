@@ -77,8 +77,7 @@ spec:
               value: {{ .Capabilities.KubeVersion.Version }}
             - name: ENV0_STAGE
               value: "{{ include "env0-agent.stage" . }}"
-            - name: IS_SELF_HOSTED_K8S
-              value: "{{ include "env0-agent.isSelfHosted" . }}"
+            {{- include "env0-agent.isSelfHostedEnvVar" . | nindent 12 }}
             - name: K8S_NAMESPACE
               value: "{{ .Release.Namespace }}"
             - name: CRON_JOB_NAME

@@ -72,12 +72,9 @@ spec:
                 
                 
                 
-                - name: IS_K8S
-                  value: "true"
                 - name: ENV0_STAGE
                   value: "prod"
-                - name: IS_SELF_HOSTED_K8S
-                  value: "true"
+                
                 - name: DEPLOYMENT_LOGS_LOG_LEVEL
                   value: "debug"
                 - name: ENV0_SERVICE_NAME

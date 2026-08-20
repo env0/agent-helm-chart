@@ -59,8 +59,7 @@ spec:
               value: ""
             - name: ENV0_STAGE
               value: "prod"
-            - name: IS_SELF_HOSTED_K8S
-              value: "true"
+            
             - name: MAX_CONCURRENT_REQUESTS
               value: "500"
             

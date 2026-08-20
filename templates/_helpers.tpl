@@ -47,6 +47,14 @@ securityContext:
 {{- end -}}
 {{- end -}}
 
+{{- /* Omitted when the isSelfHosted value is unset: agent code treats an absent IS_SELF_HOSTED_K8S as self-hosted (ATH-457) */ -}}
+{{- define "env0-agent.isSelfHostedEnvVar" -}}
+{{- if hasKey .Values "isSelfHosted" -}}
+- name: IS_SELF_HOSTED_K8S
+  value: {{ include "env0-agent.isSelfHosted" . | quote }}
+{{- end -}}
+{{- end -}}
+
 {{- define "env0-agent.stage" -}}
 {{- .Values.stage | default "prod" -}}
 {{- end -}}

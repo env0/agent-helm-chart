@@ -75,8 +75,7 @@ spec:
               value: v1.31.0
             - name: ENV0_STAGE
               value: "prod"
-            - name: IS_SELF_HOSTED_K8S
-              value: "true"
+            
             - name: K8S_NAMESPACE
               value: "sanity-tests"
             - name: CRON_JOB_NAME

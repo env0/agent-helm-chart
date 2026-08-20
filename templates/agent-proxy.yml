@@ -82,8 +82,7 @@ spec:
               value: {{ .Values.githubEnterpriseAppInstallationId | default "" | quote }}
             - name: ENV0_STAGE
               value: "{{ include "env0-agent.stage" . }}"
-            - name: IS_SELF_HOSTED_K8S
-              value: "{{ include "env0-agent.isSelfHosted" . }}"
+            {{- include "env0-agent.isSelfHostedEnvVar" . | nindent 12 }}
             - name: MAX_CONCURRENT_REQUESTS
               value: "{{ .Values.agentProxy.maxConcurrentRequests }}"
             {{- /* backward compat for pre-v5 agents */ -}}
