@@ -1,0 +1,4 @@
+# env0StateEncryptionKey is base64 of the passphrase; setting it also drops the state PVC
+agentAccessToken: "env0agent_secret-id_secret-value"
+env0StateEncryptionKey: "bXktc3RhdGUtcGFzc3BocmFzZQ=="
+environmentOutputEncryptionKey: "bXktb3V0cHV0LXBhc3NwaHJhc2U="

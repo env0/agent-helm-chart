@@ -1,0 +1,9 @@
+# the guarded values that live under a parent key, plus the one in image-pull-secret.yml
+agentAccessToken: "env0agent_secret-id_secret-value"
+agentImagePullSecret: "eyJhdXRocyI6e319"
+customerOracleCredentials:
+  tenancyOCIDEncoded: "b2NpZDEudGVuYW5jeS5vYzEuLmFhYWE="
+  secretsRegion: "dXMtYXNoYnVybi0x"
+vault:
+  method: token
+  encodedToken: "aHZzLmV4YW1wbGUtdG9rZW4="

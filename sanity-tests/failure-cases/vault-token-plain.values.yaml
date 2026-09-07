@@ -1,0 +1,4 @@
+agentAccessToken: "env0agent_secret-id_secret-value"
+vault:
+  method: token
+  encodedToken: "hvs.example-token"

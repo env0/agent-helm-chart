@@ -1,0 +1,4 @@
+# base64 of 32 random bytes, not of a passphrase string - decodes to bytes no container
+# runtime will accept as an env var
+agentAccessToken: "env0agent_secret-id_secret-value"
+env0StateEncryptionKey: "gWRQBTIUcO4Y8h8+wMHVLQ9cB7DfPfPDLm0hVoLxL/g="

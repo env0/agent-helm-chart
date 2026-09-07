@@ -94,3 +94,59 @@ securityContext:
   {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{- /* Kubernetes base64-decodes a Secret's data:, and the decoded bytes reach the container as env
+       vars, which the runtime rejects unless they are valid UTF-8. Hence base64 of text. */ -}}
+{{- define "env0-agent.assertBase64" -}}
+{{- $decoded := .value | b64dec -}}
+{{- /* Kubernetes ignores \r and \n in a data: value and no other whitespace, so line-wrapped
+       base64 - what base64(1) emits without -w0 - has to compare equal here too */ -}}
+{{- $canonical := .value | replace "\r" "" | replace "\n" "" -}}
+{{- $encode := "Encode it with: printf '%s' '<value>' | base64 -w0" -}}
+{{- if ne ($decoded | b64enc) $canonical -}}
+{{- fail (printf "%s must be base64-encoded, because the chart writes it into a Kubernetes Secret's data: field, which Kubernetes base64-decodes. %s" .name $encode) -}}
+{{- /* %q writes \xNN for exactly the bytes that are not valid UTF-8, so it accepts any real text
+       including non-ASCII. Escaped backslashes go first, or a literal \xNN in the text would match. */ -}}
+{{- else if regexMatch "\\\\x[0-9a-fA-F]{2}" (printf "%q" $decoded | replace "\\\\" "") -}}
+{{- fail (printf "%s must be base64 of valid UTF-8 text: the decoded bytes reach the agent as an environment variable, and the container runtime rejects one that is not. If the value you were given is itself a generated key such as a base64 or hex string, encode that string rather than the bytes behind it. %s" .name $encode) -}}
+{{- end -}}
+{{- end -}}
+
+{{- /* agentAccessToken is absent: the chart b64enc's that one itself */ -}}
+{{- define "env0-agent.validateEncodedSecretValues" -}}
+{{- $values := .Values -}}
+{{- range $name := list
+  "agentImagePullSecret"
+  "assumerKeyIdEncoded"
+  "assumerSecretEncoded"
+  "bitbucketServerCredentialsEncoded"
+  "customerAwsAccessKeyIdEncoded"
+  "customerAwsSecretAccessKeyEncoded"
+  "customerAzureClientId"
+  "customerAzureClientSecret"
+  "customerAzureTenantId"
+  "customerGoogleCredentials"
+  "customerGoogleProject"
+  "customerVaultTokenEncoded"
+  "env0ApiGwKeyEncoded"
+  "env0StateEncryptionKey"
+  "environmentOutputEncryptionKey"
+  "githubEnterpriseAppPrivateKeyEncoded"
+  "gitlabEnterpriseCredentialsEncoded"
+  "infracostApiKeyEncoded"
+-}}
+  {{- with (index $values $name) -}}
+    {{- include "env0-agent.assertBase64" (dict "name" $name "value" .) -}}
+  {{- end -}}
+{{- end -}}
+{{- range $name := list "tenancyOCIDEncoded" "userOCIDEncoded" "apiKeyFingerprintEncoded" "apiKeyPrivateKeyEncoded" "secretsRegion" -}}
+  {{- with (index ($values.customerOracleCredentials | default dict) $name) -}}
+    {{- include "env0-agent.assertBase64" (dict "name" (printf "customerOracleCredentials.%s" $name) "value" .) -}}
+  {{- end -}}
+{{- end -}}
+{{- range $name := list "encodedToken" "encodedPassword" -}}
+  {{- with (index ($values.vault | default dict) $name) -}}
+    {{- include "env0-agent.assertBase64" (dict "name" (printf "vault.%s" $name) "value" .) -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}

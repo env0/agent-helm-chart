@@ -85,11 +85,11 @@
       "type": "string"
     },
     "assumerKeyIdEncoded": {
-      "description": "AWS_ACCESS_KEY_ID used when assuming a role in env0",
+      "description": "AWS_ACCESS_KEY_ID used when assuming a role in env0, base64 encoded",
       "type": "string"
     },
     "assumerSecretEncoded": {
-      "description": "AWS_SECRET_ACCESS_KEY used when assuming a role in env0",
+      "description": "AWS_SECRET_ACCESS_KEY used when assuming a role in env0, base64 encoded",
       "type": "string"
     },
     "limits": {
@@ -208,7 +208,7 @@
       ]
     },
     "agentImagePullSecret": {
-      "description": "The agent Docker image pull secret. Required when the image is stored in a private registry and takes precedence over agentImagePullSecretRef",
+      "description": "The agent Docker image pull secret, a base64 encoded Docker config JSON. Required when the image is stored in a private registry and takes precedence over agentImagePullSecretRef",
       "type": "string"
     },
     "agentImagePullSecretRef": {
@@ -350,6 +350,10 @@
       "description": "Bitbucket server credentials, in the format of 'username:token', base64 encoded",
       "type": "string"
     },
+    "githubEnterpriseAppPrivateKeyEncoded": {
+      "description": "GitHub Enterprise app private key in PEM format, base64 encoded",
+      "type": "string"
+    },
     "gitlabEnterpriseCredentialsEncoded": {
       "description": "Gitlab Enterprise credentials, base64 encoded",
       "type": "string"
@@ -382,14 +386,14 @@
           "type": "string"
         },
         "secretsRegion": {
-          "description": "The OCI region where the secrets are stored",
+          "description": "The OCI region where the secrets are stored, base64 encoded",
           "type": "string"
         }
       },
       "type": "object"
     },
     "environmentOutputEncryptionKey": {
-      "description": "Key for encrypting environment sensitive outputs",
+      "description": "Key for encrypting environment sensitive outputs, base64 encoded",
       "type": "string"
     },
     "allowedVcsUrlRegex": {
@@ -443,7 +447,7 @@
     },
     "env0StateEncryptionKey": {
       "type": "string",
-      "description": "The ENV0_STATE_ENCRYPTION_KEY when provided will be used to encrypt the state file and store it in the state bucket"
+      "description": "The ENV0_STATE_ENCRYPTION_KEY when provided will be used to encrypt the state file and store it in the state bucket, base64 encoded. The docker agent takes this key as a plain environment variable, here it must be encoded"
     },
     "logger": {
       "description": "console logger config",

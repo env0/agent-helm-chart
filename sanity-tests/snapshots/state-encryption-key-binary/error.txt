@@ -1,0 +1,1 @@
+env0StateEncryptionKey must be base64 of valid UTF-8 text: the decoded bytes reach the agent as an environment variable, and the container runtime rejects one that is not. If the value you were given is itself a generated key such as a base64 or hex string, encode that string rather than the bytes behind it. Encode it with: printf '%s' '<value>' | base64 -w0

@@ -1,0 +1,2 @@
+agentAccessToken: "env0agent_secret-id_secret-value"
+env0StateEncryptionKey: "my-state-passphrase"

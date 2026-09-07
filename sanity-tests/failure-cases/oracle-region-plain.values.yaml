@@ -1,0 +1,4 @@
+# a region name does not look like a secret, so it is easy to paste unencoded
+agentAccessToken: "env0agent_secret-id_secret-value"
+customerOracleCredentials:
+  secretsRegion: "us-ashburn-1"

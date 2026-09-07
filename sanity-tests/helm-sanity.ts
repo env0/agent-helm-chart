@@ -6,6 +6,10 @@ const GREEN = "\x1b[1;32m";
 const RED = "\x1b[1;31m";
 const NC = "\x1b[0m";
 
+const TEST_CASES_DIR = "test-cases";
+const FAILURE_CASES_DIR = "failure-cases";
+const ERROR_SNAPSHOT = "error.txt";
+
 const success = (msg: string): void => console.log(`${GREEN}${msg}${NC}`);
 const error = (msg: string): void => console.error(`${RED}${msg}${NC}`);
 
@@ -61,25 +65,52 @@ const splitHelmOutput = (output: string): Snapshot[] => {
 const getCaseName = (fileName: string): string =>
   basename(fileName).replace(/\.values\.yaml$/, "");
 
-const getTestCases = (): string[] =>
-  readdirSync(join(__dirname, "test-cases"))
+const getCasesIn = (casesDir: string): string[] => {
+  const dir = join(__dirname, casesDir);
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
     .filter((f) => f.endsWith(".yaml"))
     .sort();
+};
+
+const getTestCases = (): string[] => getCasesIn(TEST_CASES_DIR);
+
+const getFailureCases = (): string[] => getCasesIn(FAILURE_CASES_DIR);
 
 const normalizeOutput = (output: string): string =>
   output.replace(/forcePodRestart:\s*"[^"]*"/g, 'forcePodRestart: "STABLE"');
 
-const renderTemplate = (testCaseFile: string): string => {
+const helmTemplateCommand = (testCaseFile: string, casesDir: string): string => {
   const chartDir = join(__dirname, "..");
   const defaultValues = join(__dirname, "default.values.yaml");
-  const testCaseValues = join(__dirname, "test-cases", testCaseFile);
+  const testCaseValues = join(__dirname, casesDir, testCaseFile);
 
-  const raw = execSync(
-    `helm template agent ${chartDir} --namespace sanity-tests --kube-version 1.31.0 -f ${defaultValues} -f ${testCaseValues}`,
-    { encoding: "utf-8" }
-  );
+  return `helm template agent ${chartDir} --namespace sanity-tests --kube-version 1.31.0 -f ${defaultValues} -f ${testCaseValues}`;
+};
+
+const renderTemplate = (testCaseFile: string): string => {
+  const raw = execSync(helmTemplateCommand(testCaseFile, TEST_CASES_DIR), {
+    encoding: "utf-8",
+  });
 
   return normalizeOutput(raw);
+};
+
+// Only the chart's own fail() message is ours; the rest is helm's CLI wrapper and moves between versions.
+const normalizeError = (message: string): string =>
+  (message.match(/execution error at \([^)]*\):\s*([\s\S]*?)\n\n/)?.[1] ?? message).trim();
+
+const renderExpectingFailure = (testCaseFile: string): string | null => {
+  try {
+    execSync(helmTemplateCommand(testCaseFile, FAILURE_CASES_DIR), {
+      encoding: "utf-8",
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+    return null;
+  } catch (e: unknown) {
+    const err = e as { stderr?: string };
+    return normalizeError(err.stderr ?? "");
+  }
 };
 
 const updateSnapshots = (): void => {
@@ -104,6 +135,23 @@ const updateSnapshots = (): void => {
     }
 
     success(`  Created ${documents.length} snapshots for ${caseName}`);
+  }
+
+  for (const testCaseFile of getFailureCases()) {
+    const caseName = getCaseName(testCaseFile);
+    const caseDir = join(snapshotsDir, caseName);
+    mkdirSync(caseDir, { recursive: true });
+
+    console.log(`Rendering (expecting failure): ${testCaseFile}`);
+    const message = renderExpectingFailure(testCaseFile);
+
+    if (message === null) {
+      error(`  [${caseName}] rendered successfully but was expected to fail`);
+      process.exit(1);
+    }
+
+    writeFileSync(join(caseDir, ERROR_SNAPSHOT), `${message}\n`);
+    success(`  Created error snapshot for ${caseName}`);
   }
 
   success(`\nSnapshots updated successfully!`);
@@ -157,6 +205,26 @@ const validate = (): void => {
     }
 
     if (caseFailed) {
+      failedCases.push(caseName);
+    } else {
+      success(`  [${caseName}] OK`);
+    }
+  }
+
+  for (const testCaseFile of getFailureCases()) {
+    const caseName = getCaseName(testCaseFile);
+    const snapshotPath = join(snapshotsDir, caseName, ERROR_SNAPSHOT);
+    const message = renderExpectingFailure(testCaseFile);
+
+    if (message === null) {
+      error(`  [${caseName}] rendered successfully but was expected to fail`);
+      failedCases.push(caseName);
+    } else if (!existsSync(snapshotPath)) {
+      error(`  Missing error snapshot: snapshots/${caseName}/${ERROR_SNAPSHOT}`);
+      failedCases.push(caseName);
+    } else if (readFileSync(snapshotPath, "utf-8") !== `${message}\n`) {
+      error(`  [${caseName}] Diff in: ${ERROR_SNAPSHOT}`);
+      printDiff(snapshotPath, `${message}\n`);
       failedCases.push(caseName);
     } else {
       success(`  [${caseName}] OK`);

@@ -1,0 +1,10 @@
+# base64(1) wraps at 76 columns unless given -w0, so a pasted key arrives line-wrapped
+agentAccessToken: "env0agent_secret-id_secret-value"
+githubEnterpriseAppPrivateKeyEncoded: |-
+  LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlCT2dJQkFBSkJBS2ozNEdreEZoRDkw
+  dmNOTFlMSW5GRVg2UHB5MXRQZjlDbnpqNHA0V0dlS0xzMVB0OFF1CktVcFJLZkZMZlJZQzlBSUtq
+  YkpUV2l0K0NxdmpXWXp2UXdFQ0F3RUFBUUpBSUwwRlE0anJ6NnBybXZHcHI3U2YKLS0tLS1FTkQg
+  UlNBIFBSSVZBVEUgS0VZLS0tLS0K
+customerGoogleCredentials: |-
+  ewogICJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsCiAgInByb2plY3RfaWQiOiAibXktcHJvamVj
+  dCIKfQo=

@@ -2,6 +2,8 @@
 
 Snapshot-based validation for the agent Helm chart. Templates are rendered with `helm template` for each test case in `test-cases/`, split into per-template files, and saved under `snapshots/`. On validation, rendered output is compared against the stored snapshots so any template change is explicit and reviewable in PRs.
 
+Cases in `failure-cases/` work the other way round: their values are invalid on purpose, so `helm template` must refuse to render them. The error message is snapshotted to `snapshots/<name>/error.txt` and compared the same way, which keeps the message itself under review.
+
 ## Prerequisites
 
 - `helm` CLI installed
@@ -28,7 +30,7 @@ Re-renders all test cases and overwrites the `snapshots/` directory. Run this af
 
 ## Adding a new test case
 
-1. Create a new `<name>.values.yaml` file in the `test-cases/` directory with the Helm values you want to test.
+1. Create a new `<name>.values.yaml` file in the `test-cases/` directory with the Helm values you want to test. To assert that a set of values is *rejected*, put the file in `failure-cases/` instead.
 2. Run `npm run sanity update-snapshots` to generate snapshots for the new case.
 3. Commit the new values file and the generated `snapshots/<name>/` directory.
 
