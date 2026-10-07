@@ -1,11 +1,10 @@
 {{- define "env0-agent.persistent-volume-claim-test.commands" -}}
-# Test that the volume is properly mounted
-if [ -d "{{ include "env0-agent.stateMountPath" . }}" ]; then
-  echo "✅💾 Persistent volume claim mounted successfully at {{ include "env0-agent.stateMountPath" . }}"
-  echo "✅💾 Shared volume mounted successfully at /mnt/shared"
-  exit 0
+# Deployments write their state here as the job's user, so a mounted but read-only volume still breaks them
+probe="{{ include "env0-agent.stateMountPath" . }}/.helm-test-$HOSTNAME"
+if touch "$probe" && rm "$probe"; then
+  echo "✅💾 Persistent volume claim is writable at {{ include "env0-agent.stateMountPath" . }}"
 else
-  echo "❌ Persistent volume claim not mounted at {{ include "env0-agent.stateMountPath" . }}"
+  echo "❌ Persistent volume claim at {{ include "env0-agent.stateMountPath" . }} is not writable by uid $(id -u)"
   exit 1
 fi
 {{- end -}}

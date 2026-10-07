@@ -6,6 +6,6 @@
     "sanity": "tsx helm-sanity.ts"
   },
   "devDependencies": {
-    "tsx": "4.23.13"
+    "tsx": "4.23.15"
   }
 }

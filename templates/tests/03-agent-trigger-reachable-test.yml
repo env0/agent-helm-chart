@@ -1,0 +1,20 @@
+{{- define "env0-agent.agent-trigger-reachable-test.commands" -}}
+# Deployment jobs fetch their task from the trigger this way (docker/k8s/wait-for-task.ts), and the trigger only
+# listens once it has reached env0, so this also covers the trigger's credentials and egress.
+url="http://${AGENT_TRIGGER_SERVICE_HOST:?agent-trigger Service not found}:${AGENT_TRIGGER_SERVICE_PORT}/ping"
+echo -n "Agent Trigger reachable from a deployment pod at $url... "
+# At most ~90s, so it fails with its own message inside the SaaS agent's helm test --timeout 2m
+for attempt in $(seq 1 9); do
+  if wget -q -T 5 -O /dev/null "$url" 2>/dev/null; then
+    echo "OK."
+    exit 0
+  fi
+  sleep 5
+done
+echo "FAILED."
+wget -q -T 5 -O /dev/null "$url" || true
+echo "❌ Check the trigger pod: kubectl logs -n {{ .Release.Namespace }} deploy/{{ include "env0-agent.releaseName" . }}-agent-trigger-deployment"
+exit 1
+{{- end -}}
+
+{{- include "env0-agent.test" (dict "root" . "testName" "agent-trigger-reachable" "commands" "env0-agent.agent-trigger-reachable-test.commands" "labels" (dict "env0" "agent-deployment")) -}}

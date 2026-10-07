@@ -6,7 +6,7 @@ metadata:
   name: &name "agent-docker-image-test"
   annotations:
     "helm.sh/hook": test
-    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   restartPolicy: Never
   
@@ -15,7 +15,6 @@ spec:
     - name: *name
       image: ghcr.io/env0/deployment-agent:dev
       imagePullPolicy: Always
-      
       
       command:
         - /bin/bash
@@ -30,6 +29,15 @@ spec:
           [ -f run-agent-trigger.js ] && echo "OK." || (echo "FAILED." && false)
           
           echo -n "Agent Deployment Job entry point... "
-          [ -f main.js ] && echo "OK." || (echo "FAILED." && false)
+          [ -f start-agent.js ] && echo "OK." || (echo "FAILED." && false)
           
           echo "✅🐳 env0 Docker image mounted successfully!"
+  
+  affinity: 
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: nodegroup
+          operator: In
+          values:
+          - env0-deployment

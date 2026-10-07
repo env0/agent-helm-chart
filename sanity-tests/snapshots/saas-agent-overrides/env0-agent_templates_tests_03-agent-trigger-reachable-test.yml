@@ -1,0 +1,42 @@
+---
+# Source: env0-agent/templates/tests/03-agent-trigger-reachable-test.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: &name "agent-agent-trigger-reachable-test"
+  labels:
+    env0: agent-deployment
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  nodeSelector:
+    karpenter.sh/nodepool: deployment
+  
+  
+  containers:
+    - name: *name
+      image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/deployment-agent:pr10000
+      imagePullPolicy: Always
+      
+      command:
+        - /bin/bash
+        - -ec
+        - |
+          # Deployment jobs fetch their task from the trigger this way (docker/k8s/wait-for-task.ts), and the trigger only
+          # listens once it has reached env0, so this also covers the trigger's credentials and egress.
+          url="http://${AGENT_TRIGGER_SERVICE_HOST:?agent-trigger Service not found}:${AGENT_TRIGGER_SERVICE_PORT}/ping"
+          echo -n "Agent Trigger reachable from a deployment pod at $url... "
+          # At most ~90s, so it fails with its own message inside the SaaS agent's helm test --timeout 2m
+          for attempt in $(seq 1 9); do
+            if wget -q -T 5 -O /dev/null "$url" 2>/dev/null; then
+              echo "OK."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "FAILED."
+          wget -q -T 5 -O /dev/null "$url" || true
+          echo "❌ Check the trigger pod: kubectl logs -n sanity-tests deploy/agent-agent-trigger-deployment"
+          exit 1

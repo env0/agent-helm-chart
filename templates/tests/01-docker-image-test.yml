@@ -8,7 +8,7 @@ echo -n "Agent Trigger entry point... "
 [ -f run-agent-trigger.js ] && echo "OK." || (echo "FAILED." && false)
 
 echo -n "Agent Deployment Job entry point... "
-[ -f main.js ] && echo "OK." || (echo "FAILED." && false)
+[ -f start-agent.js ] && echo "OK." || (echo "FAILED." && false)
 
 echo "✅🐳 env0 Docker image mounted successfully!"
 {{- end -}}

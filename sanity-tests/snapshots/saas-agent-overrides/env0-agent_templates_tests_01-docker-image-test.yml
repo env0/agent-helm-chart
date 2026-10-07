@@ -6,16 +6,17 @@ metadata:
   name: &name "agent-docker-image-test"
   annotations:
     "helm.sh/hook": test
-    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   restartPolicy: Never
+  nodeSelector:
+    karpenter.sh/nodepool: deployment
   
   
   containers:
     - name: *name
       image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/deployment-agent:pr10000
       imagePullPolicy: Always
-      
       
       command:
         - /bin/bash
@@ -30,6 +31,6 @@ spec:
           [ -f run-agent-trigger.js ] && echo "OK." || (echo "FAILED." && false)
           
           echo -n "Agent Deployment Job entry point... "
-          [ -f main.js ] && echo "OK." || (echo "FAILED." && false)
+          [ -f start-agent.js ] && echo "OK." || (echo "FAILED." && false)
           
           echo "✅🐳 env0 Docker image mounted successfully!"
