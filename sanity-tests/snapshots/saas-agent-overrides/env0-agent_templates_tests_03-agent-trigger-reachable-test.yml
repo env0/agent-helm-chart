@@ -40,3 +40,7 @@ spec:
           wget -q -T 5 -O /dev/null "$url" || true
           echo "❌ Check the trigger pod: kubectl logs -n sanity-tests deploy/agent-agent-trigger-deployment"
           exit 1
+  tolerations: 
+    - effect: NoSchedule
+      key: env0.com/nodepool
+      operator: Exists

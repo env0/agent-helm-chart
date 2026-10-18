@@ -136,3 +136,7 @@ spec:
                 
           terminationGracePeriodSeconds: 18000
           restartPolicy: Never
+          tolerations: 
+            - effect: NoSchedule
+              key: env0.com/nodepool
+              operator: Exists

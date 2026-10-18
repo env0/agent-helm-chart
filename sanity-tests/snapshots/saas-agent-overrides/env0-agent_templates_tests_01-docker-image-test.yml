@@ -34,3 +34,7 @@ spec:
           [ -f start-agent.js ] && echo "OK." || (echo "FAILED." && false)
           
           echo "✅🐳 env0 Docker image mounted successfully!"
+  tolerations: 
+    - effect: NoSchedule
+      key: env0.com/nodepool
+      operator: Exists
