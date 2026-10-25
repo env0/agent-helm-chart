@@ -27,9 +27,9 @@ spec:
       volumes:
         {{- include "env0-agent.customCertificatesVolumes" . | nindent 10 }}
       restartPolicy: Always
-      {{- if or (hasKey .Values "agentImagePullSecret") (hasKey .Values "agentImagePullSecretRef") }}
+      {{- if or .Values.agentImagePullSecret .Values.agentImagePullSecretRef }}
       imagePullSecrets:
-        - name: {{ if hasKey .Values "agentImagePullSecret" }}env0-image-pull-secret-{{ .Release.Name }}{{ else }}{{ .Values.agentImagePullSecretRef }}{{ end }}
+        - name: {{ if .Values.agentImagePullSecret }}env0-image-pull-secret-{{ .Release.Name }}{{ else }}{{ .Values.agentImagePullSecretRef }}{{ end }}
       {{- end }}
       {{- if .Values.additionalAgentConfig }}
       {{- toYaml .Values.additionalAgentConfig | nindent 6 }}
