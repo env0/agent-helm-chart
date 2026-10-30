@@ -1,4 +1,4 @@
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 import { readdirSync, readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from "fs";
 import { join, basename } from "path";
 
@@ -17,7 +17,7 @@ const printDiff = (snapshotPath: string, actual: string): void => {
   const tmpPath = `${snapshotPath}.tmp`;
   writeFileSync(tmpPath, actual);
   try {
-    execSync(`diff --color=always -u ${snapshotPath} ${tmpPath}`, {
+    execFileSync("diff", ["--color=always", "-u", snapshotPath, tmpPath], {
       encoding: "utf-8",
       stdio: ["pipe", "pipe", "pipe"],
     });
@@ -80,16 +80,28 @@ const getFailureCases = (): string[] => getCasesIn(FAILURE_CASES_DIR);
 const normalizeOutput = (output: string): string =>
   output.replace(/forcePodRestart:\s*"[^"]*"/g, 'forcePodRestart: "STABLE"');
 
-const helmTemplateCommand = (testCaseFile: string, casesDir: string): string => {
+const helmTemplateArgs = (testCaseFile: string, casesDir: string): string[] => {
   const chartDir = join(__dirname, "..");
   const defaultValues = join(__dirname, "default.values.yaml");
   const testCaseValues = join(__dirname, casesDir, testCaseFile);
 
-  return `helm template agent ${chartDir} --namespace sanity-tests --kube-version 1.31.0 -f ${defaultValues} -f ${testCaseValues}`;
+  return [
+    "template",
+    "agent",
+    chartDir,
+    "--namespace",
+    "sanity-tests",
+    "--kube-version",
+    "1.31.0",
+    "-f",
+    defaultValues,
+    "-f",
+    testCaseValues,
+  ];
 };
 
 const renderTemplate = (testCaseFile: string): string => {
-  const raw = execSync(helmTemplateCommand(testCaseFile, TEST_CASES_DIR), {
+  const raw = execFileSync("helm", helmTemplateArgs(testCaseFile, TEST_CASES_DIR), {
     encoding: "utf-8",
   });
 
@@ -102,7 +114,7 @@ const normalizeError = (message: string): string =>
 
 const renderExpectingFailure = (testCaseFile: string): string | null => {
   try {
-    execSync(helmTemplateCommand(testCaseFile, FAILURE_CASES_DIR), {
+    execFileSync("helm", helmTemplateArgs(testCaseFile, FAILURE_CASES_DIR), {
       encoding: "utf-8",
       stdio: ["pipe", "pipe", "pipe"],
     });
