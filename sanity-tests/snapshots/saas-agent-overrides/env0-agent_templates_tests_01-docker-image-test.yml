@@ -38,3 +38,12 @@ spec:
     - effect: NoSchedule
       key: env0.com/nodepool
       operator: Exists
+  affinity: 
+    podAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              env0: agent-deployment
+          topologyKey: kubernetes.io/hostname
+        weight: 100
