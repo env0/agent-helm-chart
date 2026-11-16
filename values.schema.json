@@ -323,7 +323,9 @@
         "me-south-1",
         "ap-southeast-3",
         "ap-east-1",
-        "af-south-1"
+        "af-south-1",
+        "us-gov-west-1",
+        "us-gov-east-1"
       ]
     },
     "customerGoogleProject": {
