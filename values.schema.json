@@ -60,6 +60,10 @@
       "description": "An optional K8s service account name you wish to set for the env0 deployment pods",
       "type": "string"
     },
+    "deploymentJobAutomountServiceAccountToken": {
+      "description": "Whether the env0 deployment pods mount a K8s service account token. Defaults to the service account setting for self-hosted agents. Set to false unless the deployment needs the token, for example for Vault Kubernetes authentication or in-cluster Kubernetes access. When false, a pod cannot label itself, so deployments wait for a task while agent-trigger cannot patch the labels of jobs and pods, for example when an admission webhook rejects the patch",
+      "type": "boolean"
+    },
     "storageClassName": {
       "description": "An optional K8s storage class name for the PVC",
       "type": "string"

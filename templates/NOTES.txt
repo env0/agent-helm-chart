@@ -1,0 +1,7 @@
+{{- $imageVersion := regexFind ":v?[0-9]+\\.[0-9]+\\.[0-9]+$" (regexReplaceAll "@sha256:[0-9a-f]+$" (toString .Values.dockerImage) "") | trimPrefix ":" | trimPrefix "v" -}}
+{{- $chartVersion := trimPrefix "v" .Chart.Version -}}
+{{- if and $imageVersion (semverCompare (printf "<%s" $chartVersion) $imageVersion) }}
+WARNING: dockerImage {{ .Values.dockerImage }} is older than this chart ({{ $chartVersion }}).
+An agent image older than its chart can fail deployments.
+To fix, remove the dockerImage pin, or set its tag to {{ $chartVersion }}.
+{{- end }}

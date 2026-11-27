@@ -1,0 +1,3 @@
+WARNING: dockerImage ghcr.io/env0/deployment-agent:0.9.0@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef is older than this chart (1.0.0).
+An agent image older than its chart can fail deployments.
+To fix, remove the dockerImage pin, or set its tag to 1.0.0.

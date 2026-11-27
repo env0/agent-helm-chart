@@ -1,0 +1,3 @@
+# ATL-751: a chart newer than 5.5.0 with dockerImage pinned to a 5.1.x image and isSelfHosted unset
+dockerImage: ghcr.io/env0/deployment-agent:5.1.0
+agentAccessToken: "env0agent_secret-id_secret-value"

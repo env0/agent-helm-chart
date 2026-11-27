@@ -58,6 +58,11 @@ spec:
           {{ if .Values.deploymentJobServiceAccountName }}
           serviceAccountName: {{ .Values.deploymentJobServiceAccountName }}
           {{ end }}
+          {{- if hasKey .Values "deploymentJobAutomountServiceAccountToken" }}
+          automountServiceAccountToken: {{ .Values.deploymentJobAutomountServiceAccountToken }}
+          {{- else if eq (include "env0-agent.isSelfHosted" .) "false" }}
+          automountServiceAccountToken: false
+          {{- end }}
           {{- if .Values.additionalPodConfig }}
           {{- toYaml .Values.additionalPodConfig | nindent 10 }}
           {{- end }}
@@ -149,6 +154,9 @@ spec:
               {{- end }}
               env:
 {{ include "env0-agent.http-proxy" . | indent 16 }}
+                {{- /* Read only by images older than 5.5.0, which run when dockerImage is pinned (ATL-751) */}}
+                - name: IS_K8S
+                  value: "true"
                 - name: ENV0_STAGE
                   value: "{{ include "env0-agent.stage" . }}"
                 {{- include "env0-agent.isSelfHostedEnvVar" . | nindent 16 }}

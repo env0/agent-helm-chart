@@ -1,0 +1,3 @@
+# A digest-only reference has no version to compare, so NOTES.txt stays silent (ATL-751)
+dockerImage: ghcr.io/env0/deployment-agent@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+agentAccessToken: "env0agent_secret-id_secret-value"

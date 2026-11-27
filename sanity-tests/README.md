@@ -2,6 +2,8 @@
 
 Snapshot-based validation for the agent Helm chart. Templates are rendered with `helm template` for each test case in `test-cases/`, split into per-template files, and saved under `snapshots/`. On validation, rendered output is compared against the stored snapshots so any template change is explicit and reviewable in PRs.
 
+When the chart prints notes for a test case, they are saved as `snapshots/<name>/NOTES.txt`. `helm template` never renders `templates/NOTES.txt`, so the harness copies the chart to a temp directory, renders the notes there with `tpl` into a YAML string, and reads them from `helm template` output.
+
 Cases in `failure-cases/` work the other way round: their values are invalid on purpose, so `helm template` must refuse to render them. The error message is snapshotted to `snapshots/<name>/error.txt` and compared the same way, which keeps the message itself under review.
 
 ## Prerequisites

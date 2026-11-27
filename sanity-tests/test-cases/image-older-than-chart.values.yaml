@@ -1,0 +1,3 @@
+# Older than the in-repo chart version 1.0.0, so NOTES.txt warns about the pin (ATL-751)
+dockerImage: ghcr.io/env0/deployment-agent:0.9.0
+agentAccessToken: "env0agent_secret-id_secret-value"

@@ -34,6 +34,7 @@ spec:
               emptyDir: { }
             
           
+          automountServiceAccountToken: false
           nodeSelector:
             karpenter.sh/nodepool: deployment
           containers:
@@ -67,6 +68,8 @@ spec:
                 
                 
                 
+                - name: IS_K8S
+                  value: "true"
                 - name: ENV0_STAGE
                   value: "pr10000"
                 - name: IS_SELF_HOSTED_K8S

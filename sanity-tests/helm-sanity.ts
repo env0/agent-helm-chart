@@ -1,6 +1,17 @@
 import { execFileSync } from "child_process";
-import { readdirSync, readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from "fs";
-import { join, basename } from "path";
+import {
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  rmSync,
+  existsSync,
+  cpSync,
+  mkdtempSync,
+  renameSync,
+} from "fs";
+import { tmpdir } from "os";
+import { join, basename, dirname } from "path";
 
 const GREEN = "\x1b[1;32m";
 const RED = "\x1b[1;31m";
@@ -9,6 +20,9 @@ const NC = "\x1b[0m";
 const TEST_CASES_DIR = "test-cases";
 const FAILURE_CASES_DIR = "failure-cases";
 const ERROR_SNAPSHOT = "error.txt";
+const NOTES_SNAPSHOT = "NOTES.txt";
+const NOTES_SOURCE = "sanity-notes.txt";
+const NOTES_TEMPLATE = "sanity-notes.yaml";
 
 const success = (msg: string): void => console.log(`${GREEN}${msg}${NC}`);
 const error = (msg: string): void => console.error(`${RED}${msg}${NC}`);
@@ -80,8 +94,7 @@ const getFailureCases = (): string[] => getCasesIn(FAILURE_CASES_DIR);
 const normalizeOutput = (output: string): string =>
   output.replace(/forcePodRestart:\s*"[^"]*"/g, 'forcePodRestart: "STABLE"');
 
-const helmTemplateArgs = (testCaseFile: string, casesDir: string): string[] => {
-  const chartDir = join(__dirname, "..");
+const helmArgs = (chartDir: string, testCaseFile: string, casesDir: string): string[] => {
   const defaultValues = join(__dirname, "default.values.yaml");
   const testCaseValues = join(__dirname, casesDir, testCaseFile);
 
@@ -91,8 +104,6 @@ const helmTemplateArgs = (testCaseFile: string, casesDir: string): string[] => {
     chartDir,
     "--namespace",
     "sanity-tests",
-    "--kube-version",
-    "1.31.0",
     "-f",
     defaultValues,
     "-f",
@@ -100,12 +111,48 @@ const helmTemplateArgs = (testCaseFile: string, casesDir: string): string[] => {
   ];
 };
 
+const helmTemplateArgs = (testCaseFile: string, casesDir: string): string[] => [
+  ...helmArgs(join(__dirname, ".."), testCaseFile, casesDir),
+  "--kube-version",
+  "1.31.0",
+];
+
 const renderTemplate = (testCaseFile: string): string => {
   const raw = execFileSync("helm", helmTemplateArgs(testCaseFile, TEST_CASES_DIR), {
     encoding: "utf-8",
   });
 
   return normalizeOutput(raw);
+};
+
+// helm template never renders NOTES.txt, and helm before 3.13 needs a cluster for install --dry-run=client,
+// so a temp copy of the chart renders NOTES.txt through tpl into a YAML string.
+let notesChartDir: string | undefined;
+const getNotesChartDir = (): string => {
+  if (notesChartDir) return notesChartDir;
+  const chartDir = join(__dirname, "..");
+  const copyDir = join(mkdtempSync(join(tmpdir(), "helm-sanity-")), "agent");
+  cpSync(chartDir, copyDir, { recursive: true, filter: (src) => src !== __dirname });
+  renameSync(join(copyDir, "templates", "NOTES.txt"), join(copyDir, NOTES_SOURCE));
+  writeFileSync(
+    join(copyDir, "templates", NOTES_TEMPLATE),
+    `notes: {{ tpl (.Files.Get "${NOTES_SOURCE}") . | toJson }}\n`
+  );
+  process.on("exit", () => rmSync(dirname(copyDir), { recursive: true, force: true }));
+  notesChartDir = copyDir;
+  return copyDir;
+};
+
+const renderNotes = (testCaseFile: string): string => {
+  const args = helmArgs(getNotesChartDir(), testCaseFile, TEST_CASES_DIR);
+  const raw = execFileSync("helm", [...args, "--show-only", `templates/${NOTES_TEMPLATE}`], {
+    encoding: "utf-8",
+  });
+  const json = raw.match(/^notes: (.*)$/m)?.[1];
+  if (!json) throw new Error(`Unexpected NOTES render output:\n${raw}`);
+  const notes = (JSON.parse(json) as string).trim();
+
+  return notes ? `${notes}\n` : "";
 };
 
 // Only the chart's own fail() message is ours; the rest is helm's CLI wrapper and moves between versions.
@@ -145,6 +192,9 @@ const updateSnapshots = (): void => {
     for (const doc of documents) {
       writeFileSync(join(caseDir, doc.name), doc.content);
     }
+
+    const notes = renderNotes(testCaseFile);
+    if (notes) writeFileSync(join(caseDir, NOTES_SNAPSHOT), notes);
 
     success(`  Created ${documents.length} snapshots for ${caseName}`);
   }
@@ -207,6 +257,15 @@ const validate = (): void => {
         printDiff(snapshotPath, doc.content);
         caseFailed = true;
       }
+    }
+
+    const notes = renderNotes(testCaseFile);
+    const notesPath = join(caseDir, NOTES_SNAPSHOT);
+    const existingNotes = existsSync(notesPath) ? readFileSync(notesPath, "utf-8") : "";
+    if (existingNotes !== notes) {
+      error(`  [${caseName}] Diff in: ${NOTES_SNAPSHOT}`);
+      printDiff(notesPath, notes);
+      caseFailed = true;
     }
 
     for (const file of existingFiles) {

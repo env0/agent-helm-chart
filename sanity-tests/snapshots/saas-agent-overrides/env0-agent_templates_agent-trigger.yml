@@ -100,3 +100,6 @@ spec:
               value: "123456789012.dkr.ecr.us-east-1.amazonaws.com/deployment-agent:pr10000"
             - name: RELEASE_VERSION
               value: "1.0.0"
+            
+            - name: AGENT_TRIGGER_ENFORCE_JOB_TOKEN
+              value: "true"

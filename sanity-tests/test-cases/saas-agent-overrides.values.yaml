@@ -38,6 +38,9 @@ agentThrottling:
 podAdditionalEnvVars:
   ENV0_BINARY_CACHE_URL: "https://binary-mirror-prod.s3.us-east-1.amazonaws.com"
 
+agentAdditionalEnvVars:
+  AGENT_TRIGGER_ENFORCE_JOB_TOKEN: "true"
+
 agentProxy:
   install: false
 
